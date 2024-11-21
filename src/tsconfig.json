@@ -13,7 +13,7 @@
     "strict": true,
     "sourceMap": true,
     "composite": true,
-    "rootDir": ".",
+    "rootDir": "."
   },
   "include": ["**/*"],
   "exclude": ["../dist/**/*"]

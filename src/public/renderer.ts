@@ -23,6 +23,17 @@ export class Renderer {
     this.draw()
   }
 
+  getLayoutSvg (): void {
+    const layoutElement = document.getElementById('layoutElement')
+    if (!(layoutElement instanceof HTMLObjectElement)) {
+      throw new Error('layoutElement is not an HTMLObjectElement')
+    }
+    if (layoutElement.contentDocument == null) {
+      throw new Error('layoutElement.contentDocument == null')
+    }
+    console.log('layoutElement', layoutElement)
+  }
+
   draw (): void {
     window.requestAnimationFrame(() => this.draw())
     this.setupCanvas()
@@ -34,7 +45,7 @@ export class Renderer {
   }
 
   drawStage (): void {
-    this.context.fillStyle = 'hsl(37 10 10)'
+    this.context.fillStyle = '#2b2924'
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height)
     this.resetContext()
     this.context.fillStyle = 'black'
