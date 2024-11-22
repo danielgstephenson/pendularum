@@ -6,9 +6,9 @@ import { Torso } from '../features/torso'
 import { FighterSummary } from '../summaries/fighterSummary'
 
 export class Fighter extends Actor {
-  movePower = 2
+  movePower = 4
   swingPower = 0.015
-  maxSpeed = 2
+  maxSpeed = 4
   maxSpin = 0.8
   position = Vec2(0, 0)
   velocity = Vec2(0, 0)

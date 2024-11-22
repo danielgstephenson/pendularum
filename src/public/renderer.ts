@@ -1,16 +1,19 @@
-import { Border } from '../features/border'
 import { Torso } from '../features/torso'
 import { FighterSummary } from '../summaries/fighterSummary'
+import { LayoutSummary } from '../summaries/layoutSummary'
 import { Camera } from './camera'
+import { Checker } from './checker'
 import { Client } from './client'
 
 export class Renderer {
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
   camera = new Camera()
+  checker = new Checker()
   client: Client
   fighters: FighterSummary[] = []
   id: string
+  layout?: LayoutSummary
 
   color1 = 'blue'
   color2 = 'rgb(0,120,0)'
@@ -23,38 +26,52 @@ export class Renderer {
     this.draw()
   }
 
-  getLayoutSvg (): void {
-    const layoutElement = document.getElementById('layoutElement')
-    if (!(layoutElement instanceof HTMLObjectElement)) {
-      throw new Error('layoutElement is not an HTMLObjectElement')
-    }
-    if (layoutElement.contentDocument == null) {
-      throw new Error('layoutElement.contentDocument == null')
-    }
-    console.log('layoutElement', layoutElement)
-  }
-
   draw (): void {
     window.requestAnimationFrame(() => this.draw())
+    if (this.layout == null) return
     this.setupCanvas()
     this.moveCamera()
-    this.drawStage()
+    this.drawBoundary()
+    this.drawGaps()
     this.fighters.forEach(fighter => {
       this.drawTorso(fighter)
     })
   }
 
-  drawStage (): void {
-    this.context.fillStyle = '#2b2924'
+  drawBoundary (): void {
+    if (this.layout == null) return
+    this.context.fillStyle = this.layout.backgroundColor
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height)
     this.resetContext()
-    this.context.fillStyle = 'black'
+    this.context.imageSmoothingEnabled = false
+    this.context.fillStyle = this.checker.pattern
     this.context.beginPath()
-    Border.vertices.forEach((vertex, i) => {
+    this.layout.boundary.forEach((vertex, i) => {
       if (i === 0) this.context.moveTo(vertex.x, vertex.y)
       else this.context.lineTo(vertex.x, vertex.y)
     })
     this.context.fill()
+  }
+
+  drawGaps (): void {
+    if (this.layout == null) return
+    this.resetContext()
+    this.context.fillStyle = this.layout.backgroundColor
+    const gap = this.layout.gaps[0]
+    this.context.beginPath()
+    gap.forEach((vertex, i) => {
+      if (i === 0) this.context.moveTo(vertex.x, vertex.y)
+      else this.context.lineTo(vertex.x, vertex.y)
+    })
+    this.context.fill()
+    // this.layout.gaps.forEach(gap => {
+    //   this.context.beginPath()
+    //   gap.forEach((vertex, i) => {
+    //     if (i === 0) this.context.moveTo(vertex.x, vertex.y)
+    //     else this.context.lineTo(vertex.x, vertex.y)
+    //   })
+    //   this.context.fill()
+    // })
   }
 
   drawTorso (fighter: FighterSummary): void {

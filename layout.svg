@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="7.6723151mm"
-   height="8.0321455mm"
-   viewBox="0 0 7.6723151 8.0321455"
+   width="100mm"
+   height="100mm"
+   viewBox="0 0 100 100"
    version="1.1"
    id="svg5"
    inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
@@ -21,34 +21,68 @@
      inkscape:pageopacity="1"
      inkscape:pagecheckerboard="0"
      inkscape:document-units="in"
-     showgrid="false"
+     showgrid="true"
      units="mm"
-     inkscape:zoom="11.730752"
-     inkscape:cx="24.508233"
-     inkscape:cy="17.39019"
+     inkscape:zoom="8.2948943"
+     inkscape:cx="174.26382"
+     inkscape:cy="365.64661"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
-     inkscape:window-x="1912"
-     inkscape:window-y="-12"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
-     pagecolor="#2b2924"
-     width="10in"
+     pagecolor="#242424"
+     width="100mm"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0" />
+     fit-margin-bottom="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid8030"
+       units="mm"
+       spacingx="4.9999999"
+       spacingy="4.9999999"
+       empspacing="1"
+       dotted="true"
+       originx="0"
+       originy="0"
+       visible="false" />
+  </sodipodi:namedview>
   <defs
      id="defs2" />
   <g
      inkscape:label="borderLayer"
      inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(-1.4209447,-0.85439769)">
+     id="layer1">
     <path
        id="rect2617"
-       style="stroke-width:2.64583;stroke-linecap:round"
-       d="M 1.4209447,3.7440766 3.4732439,0.85439769 7.8715828,3.6989672 9.09326,7.6110658 6.31531,8.8865431 2.3231318,8.5933323 Z"
-       sodipodi:nodetypes="ccccccc" />
+       style="fill:#060606;fill-opacity:1;stroke-width:5.43908;stroke-linecap:round"
+       d="M 44.999998,89.999996 H 19.999999 V 39.999998 H 84.999996 V 89.999996 H 59.999997 L 59.999999,105 h -15 z"
+       sodipodi:nodetypes="ccccccccc" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="gaps">
+    <path
+       id="rect6411"
+       style="display:inline;mix-blend-mode:normal;fill:#242424;fill-opacity:1;stroke-width:2.6416;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
+       inkscape:label="gap1"
+       d="M 34.999999,74.999998 V 54.999999 h 35 v 19.999999 z"
+       sodipodi:nodetypes="ccccc" />
+  </g>
+  <g
+     id="layer2"
+     inkscape:label="campLayer"
+     inkscape:groupmode="layer">
+    <circle
+       style="fill:#ff9f01;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
+       id="path845"
+       cx="52.595894"
+       cy="100.18796"
+       r="0.5"
+       inkscape:label="path845" />
   </g>
 </svg>
