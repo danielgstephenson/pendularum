@@ -4,6 +4,7 @@ import { Actor } from './actor'
 import { clamp, clampVec, normalize } from '../math'
 import { Torso } from '../features/torso'
 import { FighterSummary } from '../summaries/fighterSummary'
+import { Player } from '../player'
 
 export class Fighter extends Actor {
   movePower = 4
@@ -17,6 +18,7 @@ export class Fighter extends Actor {
   spin = 0
   team = 1
   torso: Torso
+  player?: Player
 
   constructor (game: Game) {
     super(game, {

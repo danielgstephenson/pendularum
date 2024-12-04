@@ -1,4 +1,6 @@
+import { SavePoint } from '../actors/savePoint'
 import { Torso } from '../features/torso'
+import { range } from '../math'
 import { FighterSummary } from '../summaries/fighterSummary'
 import { LayoutSummary } from '../summaries/layoutSummary'
 import { Camera } from './camera'
@@ -33,6 +35,7 @@ export class Renderer {
     this.moveCamera()
     this.drawBoundary()
     this.drawGaps()
+    this.drawSavePoints()
     this.fighters.forEach(fighter => {
       this.drawTorso(fighter)
     })
@@ -57,21 +60,42 @@ export class Renderer {
     if (this.layout == null) return
     this.resetContext()
     this.context.fillStyle = this.layout.backgroundColor
-    const gap = this.layout.gaps[0]
-    this.context.beginPath()
-    gap.forEach((vertex, i) => {
-      if (i === 0) this.context.moveTo(vertex.x, vertex.y)
-      else this.context.lineTo(vertex.x, vertex.y)
+    this.layout.gaps.forEach(gap => {
+      this.context.beginPath()
+      gap.forEach((vertex, i) => {
+        if (i === 0) this.context.moveTo(vertex.x, vertex.y)
+        else this.context.lineTo(vertex.x, vertex.y)
+      })
+      this.context.fill()
     })
-    this.context.fill()
-    // this.layout.gaps.forEach(gap => {
-    //   this.context.beginPath()
-    //   gap.forEach((vertex, i) => {
-    //     if (i === 0) this.context.moveTo(vertex.x, vertex.y)
-    //     else this.context.lineTo(vertex.x, vertex.y)
-    //   })
-    //   this.context.fill()
-    // })
+  }
+
+  drawSavePoints (): void {
+    if (this.layout == null) return
+    this.resetContext()
+    const stoneCount = 11
+    const stoneRadius = 0.25 * SavePoint.radius
+    this.layout.savePoints.forEach(position => {
+      if (this.layout == null) return
+      this.context.fillStyle = this.layout.woodColor
+      this.context.beginPath()
+      this.context.arc(
+        position.x, position.y,
+        SavePoint.radius - stoneRadius,
+        0, 2 * Math.PI
+      )
+      this.context.fill()
+      for (const i of range(1, stoneCount)) {
+        if (this.layout == null) return
+        this.context.fillStyle = this.layout.backgroundColor
+        const angle = 2 * Math.PI * i / stoneCount
+        const x = position.x + (SavePoint.radius - stoneRadius) * Math.cos(angle)
+        const y = position.y + (SavePoint.radius - stoneRadius) * Math.sin(angle)
+        this.context.beginPath()
+        this.context.arc(x, y, stoneRadius, 0, 2 * Math.PI)
+        this.context.fill()
+      }
+    })
   }
 
   drawTorso (fighter: FighterSummary): void {

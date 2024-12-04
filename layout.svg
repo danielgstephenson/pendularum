@@ -23,13 +23,13 @@
      inkscape:document-units="in"
      showgrid="true"
      units="mm"
-     inkscape:zoom="8.2948943"
-     inkscape:cx="174.26382"
-     inkscape:cy="365.64661"
+     inkscape:zoom="4.1474472"
+     inkscape:cx="166.48796"
+     inkscape:cy="405.55068"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-x="1912"
+     inkscape:window-y="-12"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
      pagecolor="#242424"
@@ -37,7 +37,8 @@
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0">
+     fit-margin-bottom="0"
+     inkscape:snap-global="true">
     <inkscape:grid
        type="xygrid"
        id="grid8030"
@@ -48,7 +49,7 @@
        dotted="true"
        originx="0"
        originy="0"
-       visible="false" />
+       visible="true" />
   </sodipodi:namedview>
   <defs
      id="defs2" />
@@ -59,19 +60,25 @@
     <path
        id="rect2617"
        style="fill:#060606;fill-opacity:1;stroke-width:5.43908;stroke-linecap:round"
-       d="M 44.999998,89.999996 H 19.999999 V 39.999998 H 84.999996 V 89.999996 H 59.999997 L 59.999999,105 h -15 z"
-       sodipodi:nodetypes="ccccccccc" />
+       d="m 34.999999,99.999998 -14.999999,-15 -1e-6,-45 25,1e-6 v -15 l -15,-14.9999992 V -24.999999 H 74.999998 V 9.9999998 L 59.999999,24.999999 v 15 l 24.999997,-1e-6 2e-6,45 -14.999999,15 -10,10.000002 h -15 z"
+       sodipodi:nodetypes="ccccccccccccccccc" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="gaps">
     <path
+       id="path3402"
+       style="display:inline;mix-blend-mode:normal;fill:#242424;fill-opacity:1;stroke-width:2.6416;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
+       inkscape:label="gap2"
+       d="M 44.999999,4.9999999 V -9.9999998 h 15 V 4.9999999 l -5,4.9999999 h -5 z"
+       sodipodi:nodetypes="ccccccc" />
+    <path
        id="rect6411"
        style="display:inline;mix-blend-mode:normal;fill:#242424;fill-opacity:1;stroke-width:2.6416;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
        inkscape:label="gap1"
-       d="M 34.999999,74.999998 V 54.999999 h 35 v 19.999999 z"
-       sodipodi:nodetypes="ccccc" />
+       d="M 34.999999,74.999998 V 54.999999 h 35 v 19.999999 l -15,15 h -5 z"
+       sodipodi:nodetypes="ccccccc" />
   </g>
   <g
      id="layer2"
@@ -80,9 +87,9 @@
     <circle
        style="fill:#ff9f01;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
        id="path845"
-       cx="52.595894"
-       cy="100.18796"
-       r="0.5"
-       inkscape:label="path845" />
+       cx="52.59042"
+       cy="99.948372"
+       inkscape:label="path845"
+       r="1" />
   </g>
 </svg>

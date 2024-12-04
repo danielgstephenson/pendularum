@@ -28,6 +28,12 @@ export function getAngleDiff (toAngle: number, fromAngle: number): number {
   return Math.atan2(w.y * v.x - w.x * v.y, w.x * v.x + w.y * v.y)
 }
 
+export function rotate (vector: Vec2, angle: number): Vec2 {
+  const x = vector.x * Math.cos(angle) - vector.y * Math.sin(angle)
+  const y = vector.x * Math.sin(angle) + vector.y * Math.cos(angle)
+  return Vec2(x, y)
+}
+
 export function clamp (a: number, b: number, x: number): number {
   return Math.max(a, Math.min(x, b))
 }

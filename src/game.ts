@@ -8,6 +8,7 @@ import { GameSummary } from './summaries/gameSummary'
 import { Runner } from './runner'
 import { InputSummary } from './summaries/inputSummary'
 import { Layout } from './layout'
+import { SavePoint } from './actors/savePoint'
 
 export class Game {
   world: World
@@ -18,6 +19,8 @@ export class Game {
   actors = new Map<string, Actor>()
   fighters = new Map<string, Fighter>()
   players = new Map<string, Player>()
+  savePoints = new Map<string, SavePoint>()
+  startCamp?: SavePoint
   summary: GameSummary
 
   constructor (server: Server) {
@@ -27,6 +30,7 @@ export class Game {
     this.cavern = new Cavern(this)
     this.summary = new GameSummary(this)
     this.runner = new Runner(this)
+    this.setupCamps()
     this.setupIo()
   }
 
@@ -46,6 +50,13 @@ export class Game {
         console.log('disconnect:', socket.id)
         player.remove()
       })
+    })
+  }
+
+  setupCamps (): void {
+    this.layout.savePoints.forEach((position, i) => {
+      const camp = new SavePoint(this, position)
+      if (i === 0) this.startCamp = camp
     })
   }
 

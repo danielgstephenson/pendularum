@@ -10,7 +10,8 @@ export class Layout {
   boundary: Vec2[]
   gaps: Vec2[][]
   backgroundColor: string
-  camps: Vec2[] = []
+  woodColor: string
+  savePoints: Vec2[] = []
   summary: LayoutSummary
 
   constructor () {
@@ -23,21 +24,22 @@ export class Layout {
     const svgString = fs.readFileSync(filePath, 'utf-8')
     this.svg = parseSvg(svgString)
     this.backgroundColor = this.getBackroundColor()
+    this.woodColor = 'hsl(33 100 5)'
     this.boundary = this.getBorder()
     this.gaps = this.getGaps()
     console.log('gaps', this.gaps)
-    this.camps = this.getCamps()
+    this.savePoints = this.getSavePoints()
     this.summary = new LayoutSummary(this)
   }
 
-  getCamps (): Vec2[] {
-    const campLayer = this.svg.children[4]
-    const camps = campLayer.children.map(child => {
+  getSavePoints (): Vec2[] {
+    const savePointLayer = this.svg.children[4]
+    const savePoints = savePointLayer.children.map(child => {
       const x = Number(child.attributes.cx)
       const y = Number(child.attributes.cy)
       return Vec2(x, -y)
     })
-    return camps
+    return savePoints
   }
 
   getGaps (): Vec2[][] {
