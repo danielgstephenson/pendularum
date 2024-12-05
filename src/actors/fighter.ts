@@ -6,6 +6,7 @@ import { Torso } from '../features/torso'
 import { FighterSummary } from '../summaries/fighterSummary'
 import { Player } from '../player'
 import { Weapon } from './weapon'
+import { Bot } from '../bot'
 
 export class Fighter extends Actor {
   movePower = 2
@@ -13,12 +14,14 @@ export class Fighter extends Actor {
   position = Vec2(0, 0)
   velocity = Vec2(0, 0)
   move = Vec2(0, 0)
+  dead = false
   team = 1
   torso: Torso
   weapon: Weapon
   player?: Player
+  bot?: Bot
 
-  constructor (game: Game) {
+  constructor (game: Game, position: Vec2) {
     super(game, {
       type: 'dynamic',
       bullet: true,
@@ -27,6 +30,7 @@ export class Fighter extends Actor {
       fixedRotation: true
     })
     this.label = 'fighter'
+    this.body.setPosition(position)
     this.body.setMassData({
       mass: 1,
       center: Vec2(0, 0),
@@ -35,6 +39,10 @@ export class Fighter extends Actor {
     this.game.fighters.set(this.id, this)
     this.torso = new Torso(this)
     this.weapon = new Weapon(this)
+  }
+
+  die (): void {
+    this.dead = true
   }
 
   updateConfiguration (): void {
@@ -55,6 +63,10 @@ export class Fighter extends Actor {
     if (this.removed) {
       this.game.fighters.delete(this.id)
       return
+    }
+    if (this.dead) {
+      if (this.player != null) this.player.respawn()
+      if (this.bot != null) this.bot.respawn()
     }
     this.updateConfiguration()
   }

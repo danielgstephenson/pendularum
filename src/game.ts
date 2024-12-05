@@ -10,6 +10,7 @@ import { InputSummary } from './summaries/inputSummary'
 import { Layout } from './layout'
 import { Star } from './actors/star'
 import { Collider } from './collider'
+import { Enemy } from './actors/enemy'
 
 export class Game {
   world: World
@@ -34,6 +35,7 @@ export class Game {
     this.runner = new Runner(this)
     this.collider = new Collider(this)
     this.setupSavePoints()
+    this.setupEnemies()
     this.setupIo()
   }
 
@@ -60,6 +62,12 @@ export class Game {
     this.layout.savePoints.forEach((position, i) => {
       void new Star(this, position)
       if (i === 0) this.startPoint = position
+    })
+  }
+
+  setupEnemies (): void {
+    this.layout.enemyPoints.forEach((position, i) => {
+      void new Enemy(this, position)
     })
   }
 

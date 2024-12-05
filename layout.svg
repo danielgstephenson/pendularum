@@ -23,15 +23,15 @@
      inkscape:document-units="in"
      showgrid="true"
      units="mm"
-     inkscape:zoom="5.865376"
-     inkscape:cx="188.13798"
-     inkscape:cy="337.91525"
+     inkscape:zoom="2.932688"
+     inkscape:cx="237.83641"
+     inkscape:cy="271.08237"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="1912"
      inkscape:window-y="-12"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer3"
+     inkscape:current-layer="layer4"
      pagecolor="#242424"
      width="100mm"
      fit-margin-top="0"
@@ -88,20 +88,32 @@
   </g>
   <g
      id="layer2"
-     inkscape:label="SavePoints">
+     inkscape:label="Stars">
     <circle
        style="fill:#ff9f01;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
        id="path845"
        cx="52.5"
        cy="102.5"
-       inkscape:label="savePoint1"
+       inkscape:label="star1"
        r="1" />
     <circle
        style="fill:#ff9f01;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
        id="path845-2"
        cx="27.5"
        cy="82.5"
-       inkscape:label="savePoint2"
+       inkscape:label="star2"
+       r="1" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Enemies">
+    <circle
+       style="fill:#01ff0e;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
+       id="path845-9"
+       cx="27.5"
+       cy="62.5"
+       inkscape:label="enemy1"
        r="1" />
   </g>
 </svg>

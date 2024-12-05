@@ -25,7 +25,7 @@ export class Collider {
       const actorB = featureB.actor
       if (actorA instanceof Fighter && actorB instanceof Star) {
         if (actorA.player == null) return
-        actorA.player.savePoint = actorB.position
+        actorA.player.spawnPoint = actorB.position
       }
     })
   }
@@ -41,6 +41,11 @@ export class Collider {
       const actorB = featureB.actor
       if (actorA instanceof Fighter && actorB instanceof Weapon) {
         contact.setEnabled(false)
+        const fighter = actorA
+        const weapon = actorB
+        if (fighter.team !== weapon.fighter.team) {
+          fighter.die()
+        }
       }
     })
   }

@@ -8,12 +8,12 @@ export class Player {
   game: Game
   fighter: Fighter
   id: string
-  savePoint: Vec2
+  spawnPoint: Vec2
 
   constructor (game: Game) {
     this.game = game
-    this.savePoint = this.game.startPoint
-    this.fighter = new Fighter(this.game)
+    this.spawnPoint = this.game.startPoint
+    this.fighter = new Fighter(this.game, this.spawnPoint)
     this.fighter.player = this
     this.id = this.fighter.id
     this.game.players.set(this.id, this)
@@ -21,14 +21,15 @@ export class Player {
   }
 
   respawn (): void {
-    if (this.game.startPoint != null) {
-      const campPoint = this.savePoint
-      const angle = Math.random() * 2 * Math.PI
-      const offset = rotate(Vec2(0, 2), angle)
-      const startPoint = Vec2.add(campPoint, offset)
-      this.fighter.body.setPosition(startPoint)
-      this.fighter.weapon.body.setPosition(startPoint)
-    }
+    console.log('respawn player')
+    const angle = Math.random() * 2 * Math.PI
+    const offset = rotate(Vec2(0, 2), angle)
+    const startPoint = Vec2.add(this.spawnPoint, offset)
+    this.fighter.body.setPosition(startPoint)
+    this.fighter.weapon.body.setPosition(startPoint)
+    this.fighter.body.setLinearVelocity(Vec2(0, 0))
+    this.fighter.weapon.body.setLinearVelocity(Vec2(0, 0))
+    this.fighter.dead = false
   }
 
   summarize (): PlayerSummary {

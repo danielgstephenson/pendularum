@@ -7,7 +7,7 @@ import { clampVec } from '../math'
 export class Weapon extends Actor {
   fighter: Fighter
   blade: Blade
-  maxSpeed = 10
+  maxSpeed = 8
   position = Vec2(0, 0)
   velocity = Vec2(0, 0)
 
@@ -33,7 +33,7 @@ export class Weapon extends Actor {
       bodyB: this.body,
       localAnchorA: Vec2(0, 0),
       localAnchorB: Vec2(0, 0),
-      frequencyHz: 0.3,
+      frequencyHz: 0.25,
       collideConnected: false
     })
     this.game.world.createJoint(distanceJoint)
@@ -42,7 +42,7 @@ export class Weapon extends Actor {
       bodyB: this.body,
       localAnchorA: Vec2(0, 0),
       localAnchorB: Vec2(0, 0),
-      maxLength: 5,
+      maxLength: 4,
       collideConnected: false
     })
     this.game.world.createJoint(ropeJoint)

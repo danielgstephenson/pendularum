@@ -10,6 +10,7 @@ export class Layout {
   boundary: Vec2[]
   gaps: Vec2[][]
   savePoints: Vec2[] = []
+  enemyPoints: Vec2[] = []
   summary: LayoutSummary
 
   constructor () {
@@ -24,7 +25,18 @@ export class Layout {
     this.boundary = this.getBorder()
     this.gaps = this.getGaps()
     this.savePoints = this.getSavePoints()
+    this.enemyPoints = this.getEnemyPoints()
     this.summary = new LayoutSummary(this)
+  }
+
+  getEnemyPoints (): Vec2[] {
+    const enemyPointLayer = this.svg.children[5]
+    const enemyPoints = enemyPointLayer.children.map(child => {
+      const x = Number(child.attributes.cx)
+      const y = Number(child.attributes.cy)
+      return Vec2(x, -y)
+    })
+    return enemyPoints
   }
 
   getSavePoints (): Vec2[] {

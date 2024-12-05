@@ -10,6 +10,6 @@ export class PlayerSummary {
   constructor (player: Player) {
     this.game = player.game.summary
     this.id = player.fighter.id
-    this.savePoint = player.savePoint
+    this.savePoint = player.spawnPoint
   }
 }
