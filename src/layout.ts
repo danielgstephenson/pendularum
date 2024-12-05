@@ -9,8 +9,6 @@ export class Layout {
   svg: INode
   boundary: Vec2[]
   gaps: Vec2[][]
-  backgroundColor: string
-  woodColor: string
   savePoints: Vec2[] = []
   summary: LayoutSummary
 
@@ -23,11 +21,8 @@ export class Layout {
     }
     const svgString = fs.readFileSync(filePath, 'utf-8')
     this.svg = parseSvg(svgString)
-    this.backgroundColor = this.getBackroundColor()
-    this.woodColor = 'hsl(33 100 5)'
     this.boundary = this.getBorder()
     this.gaps = this.getGaps()
-    console.log('gaps', this.gaps)
     this.savePoints = this.getSavePoints()
     this.summary = new LayoutSummary(this)
   }

@@ -8,7 +8,8 @@ import { GameSummary } from './summaries/gameSummary'
 import { Runner } from './runner'
 import { InputSummary } from './summaries/inputSummary'
 import { Layout } from './layout'
-import { SavePoint } from './actors/savePoint'
+import { Star } from './actors/star'
+import { Collider } from './collider'
 
 export class Game {
   world: World
@@ -16,12 +17,13 @@ export class Game {
   cavern: Cavern
   server: Server
   runner: Runner
+  collider: Collider
   actors = new Map<string, Actor>()
   fighters = new Map<string, Fighter>()
   players = new Map<string, Player>()
-  savePoints = new Map<string, SavePoint>()
-  startCamp?: SavePoint
+  stars = new Map<string, Star>()
   summary: GameSummary
+  startPoint = Vec2(0, 0)
 
   constructor (server: Server) {
     this.server = server
@@ -30,7 +32,8 @@ export class Game {
     this.cavern = new Cavern(this)
     this.summary = new GameSummary(this)
     this.runner = new Runner(this)
-    this.setupCamps()
+    this.collider = new Collider(this)
+    this.setupSavePoints()
     this.setupIo()
   }
 
@@ -53,10 +56,10 @@ export class Game {
     })
   }
 
-  setupCamps (): void {
+  setupSavePoints (): void {
     this.layout.savePoints.forEach((position, i) => {
-      const camp = new SavePoint(this, position)
-      if (i === 0) this.startCamp = camp
+      void new Star(this, position)
+      if (i === 0) this.startPoint = position
     })
   }
 

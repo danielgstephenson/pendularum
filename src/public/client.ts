@@ -20,6 +20,7 @@ export class Client {
     this.socket.on('summary', (playerSummary: PlayerSummary) => {
       this.renderer.fighters = playerSummary.game.fighters
       this.renderer.id = playerSummary.id
+      this.renderer.savePoint = playerSummary.savePoint
     })
   }
 

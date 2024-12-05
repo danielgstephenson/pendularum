@@ -8,9 +8,11 @@ export class Player {
   game: Game
   fighter: Fighter
   id: string
+  savePoint: Vec2
 
   constructor (game: Game) {
     this.game = game
+    this.savePoint = this.game.startPoint
     this.fighter = new Fighter(this.game)
     this.fighter.player = this
     this.id = this.fighter.id
@@ -19,12 +21,13 @@ export class Player {
   }
 
   respawn (): void {
-    if (this.game.startCamp != null) {
-      const campPoint = this.game.startCamp.position
+    if (this.game.startPoint != null) {
+      const campPoint = this.savePoint
       const angle = Math.random() * 2 * Math.PI
       const offset = rotate(Vec2(0, 2), angle)
       const startPoint = Vec2.add(campPoint, offset)
       this.fighter.body.setPosition(startPoint)
+      this.fighter.weapon.body.setPosition(startPoint)
     }
   }
 

@@ -3,8 +3,8 @@ import { Feature } from '../features/feature'
 import { Game } from '../game'
 import { Actor } from './actor'
 
-export class SavePoint extends Actor {
-  static radius = 1
+export class Star extends Actor {
+  static radius = 4
   feature: Feature
   position: Vec2
 
@@ -12,11 +12,12 @@ export class SavePoint extends Actor {
     super(game, { type: 'static' })
     this.label = 'savePoint'
     this.feature = new Feature(this, {
-      shape: new Circle(Vec2(0, 0), SavePoint.radius)
+      shape: new Circle(Vec2(0, 0), Star.radius),
+      isSensor: true
     })
     this.feature.label = 'savePoint'
     this.body.setPosition(position)
     this.position = position
-    this.game.savePoints.set(this.id, this)
+    this.game.stars.set(this.id, this)
   }
 }
