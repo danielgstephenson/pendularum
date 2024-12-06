@@ -6,11 +6,13 @@ export class FighterSummary {
   bladePosition: Vec2
   id: string
   team: number
+  dead: boolean
 
   constructor (fighter: Fighter) {
     this.position = fighter.body.getPosition()
     this.bladePosition = fighter.weapon.body.getPosition()
     this.id = fighter.id
     this.team = fighter.team
+    this.dead = fighter.dead
   }
 }

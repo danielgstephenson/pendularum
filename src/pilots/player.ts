@@ -1,21 +1,20 @@
 import { Vec2 } from 'planck'
-import { Fighter } from './actors/fighter'
-import { Game } from './game'
-import { PlayerSummary } from './summaries/playerSummary'
-import { rotate } from './math'
+import { Game } from '../game'
+import { PlayerSummary } from '../summaries/playerSummary'
+import { rotate } from '../math'
+import { Ally } from '../actors/ally'
 
 export class Player {
   game: Game
-  fighter: Fighter
+  ally: Ally
   id: string
   spawnPoint: Vec2
 
   constructor (game: Game) {
     this.game = game
     this.spawnPoint = this.game.startPoint
-    this.fighter = new Fighter(this.game, this.spawnPoint)
-    this.fighter.player = this
-    this.id = this.fighter.id
+    this.ally = new Ally(this)
+    this.id = this.ally.id
     this.game.players.set(this.id, this)
     this.respawn()
   }
@@ -25,11 +24,11 @@ export class Player {
     const angle = Math.random() * 2 * Math.PI
     const offset = rotate(Vec2(0, 2), angle)
     const startPoint = Vec2.add(this.spawnPoint, offset)
-    this.fighter.body.setPosition(startPoint)
-    this.fighter.weapon.body.setPosition(startPoint)
-    this.fighter.body.setLinearVelocity(Vec2(0, 0))
-    this.fighter.weapon.body.setLinearVelocity(Vec2(0, 0))
-    this.fighter.dead = false
+    this.ally.body.setPosition(startPoint)
+    this.ally.weapon.body.setPosition(startPoint)
+    this.ally.body.setLinearVelocity(Vec2(0, 0))
+    this.ally.weapon.body.setLinearVelocity(Vec2(0, 0))
+    this.ally.dead = false
   }
 
   summarize (): PlayerSummary {
@@ -37,7 +36,7 @@ export class Player {
   }
 
   remove (): void {
-    this.fighter.remove()
+    this.ally.remove()
     this.game.players.delete(this.id)
   }
 }

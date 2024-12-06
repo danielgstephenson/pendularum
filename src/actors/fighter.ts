@@ -4,9 +4,7 @@ import { Actor } from './actor'
 import { clampVec, normalize } from '../math'
 import { Torso } from '../features/torso'
 import { FighterSummary } from '../summaries/fighterSummary'
-import { Player } from '../player'
 import { Weapon } from './weapon'
-import { Bot } from '../bot'
 
 export class Fighter extends Actor {
   movePower = 2
@@ -18,8 +16,6 @@ export class Fighter extends Actor {
   team = 1
   torso: Torso
   weapon: Weapon
-  player?: Player
-  bot?: Bot
 
   constructor (game: Game, position: Vec2) {
     super(game, {
@@ -65,11 +61,12 @@ export class Fighter extends Actor {
       return
     }
     if (this.dead) {
-      if (this.player != null) this.player.respawn()
-      if (this.bot != null) this.bot.respawn()
+      this.respawn()
     }
     this.updateConfiguration()
   }
+
+  respawn (): void {}
 
   summarize (): FighterSummary {
     return new FighterSummary(this)

@@ -2,7 +2,7 @@ import { Server } from './server'
 import { Vec2, World } from 'planck'
 import { Actor } from './actors/actor'
 import { Cavern } from './actors/cavern'
-import { Player } from './player'
+import { Player } from './pilots/player'
 import { Fighter } from './actors/fighter'
 import { GameSummary } from './summaries/gameSummary'
 import { Runner } from './runner'
@@ -46,8 +46,8 @@ export class Game {
       const player = new Player(this)
       socket.on('input', (input: InputSummary) => {
         const move = input.move ?? Vec2(0, 0)
-        player.fighter.move.x = move.x ?? 0
-        player.fighter.move.y = move.y ?? 0
+        player.ally.move.x = move.x ?? 0
+        player.ally.move.y = move.y ?? 0
         const playerSummary = player.summarize()
         socket.emit('summary', playerSummary)
       })

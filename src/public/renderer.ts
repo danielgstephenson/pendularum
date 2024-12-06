@@ -104,6 +104,7 @@ export class Renderer {
   }
 
   drawTorso (fighter: FighterSummary): void {
+    if (fighter.dead) return
     this.resetContext()
     this.context.fillStyle = fighter.team === 1 ? this.torsoColor1 : this.torsoColor2
     this.context.beginPath()
@@ -116,6 +117,7 @@ export class Renderer {
   }
 
   drawBlade (fighter: FighterSummary): void {
+    if (fighter.dead) return
     this.resetContext()
     this.context.fillStyle = fighter.team === 1 ? this.bladeColor1 : this.bladeColor2
     this.context.beginPath()
@@ -128,6 +130,7 @@ export class Renderer {
   }
 
   drawString (fighter: FighterSummary): void {
+    if (fighter.dead) return
     this.resetContext()
     this.context.strokeStyle = fighter.team === 1 ? this.bladeColor1 : this.bladeColor2
     this.context.lineWidth = 0.1

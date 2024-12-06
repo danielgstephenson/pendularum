@@ -1,8 +1,9 @@
-import { DistanceJoint, RopeJoint, Vec2 } from 'planck'
+import { DistanceJoint, Fixture, RopeJoint, Vec2 } from 'planck'
 import { Actor } from './actor'
 import { Fighter } from './fighter'
 import { Blade } from '../features/blade'
 import { clampVec } from '../math'
+import { Feature } from '../features/feature'
 
 export class Weapon extends Actor {
   fighter: Fighter
@@ -57,5 +58,17 @@ export class Weapon extends Actor {
   postStep (): void {
     super.postStep()
     this.updateConfiguration()
+    this.attack()
+  }
+
+  attack (): void {
+    const callback = (fixture: Fixture, point: Vec2, normal: Vec2, fraction: number): number => {
+      const hitFeature = fixture.getUserData() as Feature
+      if (hitFeature.actor instanceof Fighter && hitFeature.actor.team !== this.fighter.team) {
+        hitFeature.actor.die()
+      }
+      return 1
+    }
+    this.game.world.rayCast(this.position, this.fighter.position, callback)
   }
 }
