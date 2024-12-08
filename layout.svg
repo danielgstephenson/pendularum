@@ -24,8 +24,8 @@
      showgrid="true"
      units="mm"
      inkscape:zoom="2.932688"
-     inkscape:cx="237.83641"
-     inkscape:cy="271.08237"
+     inkscape:cx="266.82006"
+     inkscape:cy="221.63967"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="1912"
@@ -76,13 +76,13 @@
     <path
        id="rect6411"
        style="display:inline;mix-blend-mode:normal;fill:#242424;fill-opacity:1;stroke-width:2.6416;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
-       inkscape:label="gap1"
+       inkscape:label="gap0"
        d="M 34.999999,74.999998 V 54.999999 h 35 v 19.999999 l -15,15 h -5 z"
        sodipodi:nodetypes="ccccccc" />
     <path
        id="path3402"
        style="display:inline;mix-blend-mode:normal;fill:#242424;fill-opacity:1;stroke-width:2.6416;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
-       inkscape:label="gap2"
+       inkscape:label="gap1"
        d="M 44.999999,4.9999999 V -9.9999998 h 15 V 4.9999999 l -5,4.9999999 h -5 z"
        sodipodi:nodetypes="ccccccc" />
   </g>
@@ -94,26 +94,68 @@
        id="path845"
        cx="52.5"
        cy="102.5"
-       inkscape:label="star1"
+       inkscape:label="star0"
        r="1" />
     <circle
        style="fill:#ff9f01;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
        id="path845-2"
        cx="27.5"
        cy="82.5"
-       inkscape:label="star2"
+       inkscape:label="star1"
        r="1" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer4"
-     inkscape:label="Enemies">
+     inkscape:label="Guards">
     <circle
        style="fill:#01ff0e;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
        id="path845-9"
        cx="27.5"
-       cy="62.5"
-       inkscape:label="enemy1"
+       cy="47.5"
+       inkscape:label="guard0"
+       r="1" />
+    <circle
+       style="fill:#01ff0e;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
+       id="path845-9-1"
+       cx="35"
+       cy="45"
+       inkscape:label="guard1"
+       r="1" />
+    <circle
+       style="fill:#01ff0e;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
+       id="path845-9-8"
+       cx="35"
+       cy="50"
+       inkscape:label="guard2"
+       r="1" />
+    <circle
+       style="fill:#01ff0e;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
+       id="path845-9-83"
+       cx="45"
+       cy="45"
+       inkscape:label="guard3"
+       r="1" />
+    <circle
+       style="fill:#01ff0e;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
+       id="path845-9-3"
+       cx="45"
+       cy="50"
+       inkscape:label="guard4"
+       r="1" />
+    <circle
+       style="fill:#01ff0e;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
+       id="path845-9-11"
+       cx="55"
+       cy="45"
+       inkscape:label="guard5"
+       r="1" />
+    <circle
+       style="fill:#01ff0e;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
+       id="path845-9-0"
+       cx="55"
+       cy="50"
+       inkscape:label="guard7"
        r="1" />
   </g>
 </svg>

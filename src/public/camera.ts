@@ -14,7 +14,7 @@ export class Camera {
 
   adjustZoom (change: number): void {
     this.zoom = clamp(this.minZoom, this.maxZoom, this.zoom + change)
-    this.scale = 0.04 * Math.exp(0.1 * this.zoom)
+    this.scale = 0.02 * Math.exp(0.1 * this.zoom)
     // console.log('zoom:', this.zoom)
   }
 }

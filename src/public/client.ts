@@ -15,12 +15,12 @@ export class Client {
     this.socket.on('connected', (layout: LayoutSummary) => {
       console.log('connected')
       this.renderer.layout = layout
-      setInterval(() => this.updateServer(), 1000 / 60)
+      setInterval(() => this.updateServer(), 1000 / 30)
     })
     this.socket.on('summary', (playerSummary: PlayerSummary) => {
       this.renderer.fighters = playerSummary.game.fighters
       this.renderer.id = playerSummary.id
-      this.renderer.savePoint = playerSummary.savePoint
+      this.renderer.savePoint = playerSummary.spawnPoint
     })
   }
 

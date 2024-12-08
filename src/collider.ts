@@ -5,7 +5,10 @@ import { Fighter } from './actors/fighter'
 import { Star } from './actors/star'
 import { Weapon } from './actors/weapon'
 import { Counter } from './actors/counter'
-import { Ally } from './actors/ally'
+import { Player } from './actors/player'
+import { Halo } from './features/halo'
+import { Blade } from './features/blade'
+import { Torso } from './features/torso'
 
 export class Collider {
   game: Game
@@ -26,12 +29,11 @@ export class Collider {
       const featureB = pair[1]
       const actorA = featureA.actor
       const actorB = featureB.actor
-      if (actorA instanceof Ally && actorB instanceof Star) {
-        actorA.player.spawnPoint = actorB.position
+      if (actorA instanceof Player && featureA instanceof Torso && actorB instanceof Star) {
+        actorA.spawnPoint = actorB.position
       }
-      if (actorA instanceof Ally && actorB instanceof Counter) {
+      if (actorA instanceof Player && featureA instanceof Torso && actorB instanceof Counter) {
         actorB.playerCount += 1
-        console.log('playerCount', actorB.playerCount)
       }
     })
   }
@@ -45,9 +47,8 @@ export class Collider {
       const featureB = pair[1]
       const actorA = featureA.actor
       const actorB = featureB.actor
-      if (actorA instanceof Ally && actorB instanceof Counter) {
+      if (actorA instanceof Player && actorB instanceof Counter) {
         actorB.playerCount -= 1
-        console.log('playerCount', actorB.playerCount)
       }
     })
   }
@@ -61,6 +62,16 @@ export class Collider {
       const featureB = pair[1]
       const actorA = featureA.actor
       const actorB = featureB.actor
+      if (featureA instanceof Halo) {
+        featureA.onCollide(contact)
+        contact.setEnabled(false)
+        return
+      }
+      if (featureB instanceof Halo) {
+        featureB.onCollide(contact)
+        contact.setEnabled(false)
+        return
+      }
       if (actorA instanceof Fighter && actorA.dead) {
         contact.setEnabled(false)
         return
@@ -77,10 +88,10 @@ export class Collider {
         contact.setEnabled(false)
         return
       }
-      if (actorA instanceof Fighter && actorB instanceof Weapon) {
+      if (featureA instanceof Blade && featureB instanceof Torso) {
         contact.setEnabled(false)
-        const fighter = actorA
-        const weapon = actorB
+        const weapon = featureA.weapon
+        const fighter = featureB.fighter
         if (fighter.team !== weapon.fighter.team) {
           fighter.die()
         }

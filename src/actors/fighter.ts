@@ -7,7 +7,7 @@ import { FighterSummary } from '../summaries/fighterSummary'
 import { Weapon } from './weapon'
 
 export class Fighter extends Actor {
-  movePower = 2
+  movePower = 4
   maxSpeed = 4
   position = Vec2(0, 0)
   velocity = Vec2(0, 0)
@@ -27,14 +27,14 @@ export class Fighter extends Actor {
     })
     this.label = 'fighter'
     this.body.setPosition(position)
+    this.game.fighters.set(this.id, this)
+    this.torso = new Torso(this)
+    this.weapon = new Weapon(this)
     this.body.setMassData({
       mass: 1,
       center: Vec2(0, 0),
       I: 0.25
     })
-    this.game.fighters.set(this.id, this)
-    this.torso = new Torso(this)
-    this.weapon = new Weapon(this)
   }
 
   die (): void {

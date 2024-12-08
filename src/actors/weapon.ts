@@ -4,11 +4,12 @@ import { Fighter } from './fighter'
 import { Blade } from '../features/blade'
 import { clampVec } from '../math'
 import { Feature } from '../features/feature'
+import { Torso } from '../features/torso'
 
 export class Weapon extends Actor {
   fighter: Fighter
   blade: Blade
-  maxSpeed = 8
+  maxSpeed = 20
   position = Vec2(0, 0)
   velocity = Vec2(0, 0)
 
@@ -43,7 +44,7 @@ export class Weapon extends Actor {
       bodyB: this.body,
       localAnchorA: Vec2(0, 0),
       localAnchorB: Vec2(0, 0),
-      maxLength: 4,
+      maxLength: 3,
       collideConnected: false
     })
     this.game.world.createJoint(ropeJoint)
@@ -64,8 +65,8 @@ export class Weapon extends Actor {
   attack (): void {
     const callback = (fixture: Fixture, point: Vec2, normal: Vec2, fraction: number): number => {
       const hitFeature = fixture.getUserData() as Feature
-      if (hitFeature.actor instanceof Fighter && hitFeature.actor.team !== this.fighter.team) {
-        hitFeature.actor.die()
+      if (hitFeature instanceof Torso && hitFeature.fighter.team !== this.fighter.team) {
+        hitFeature.fighter.die()
       }
       return 1
     }

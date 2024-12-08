@@ -2,7 +2,6 @@ import { Server } from './server'
 import { Vec2, World } from 'planck'
 import { Actor } from './actors/actor'
 import { Cavern } from './actors/cavern'
-import { Player } from './pilots/player'
 import { Fighter } from './actors/fighter'
 import { GameSummary } from './summaries/gameSummary'
 import { Runner } from './runner'
@@ -10,7 +9,8 @@ import { InputSummary } from './summaries/inputSummary'
 import { Layout } from './layout'
 import { Star } from './actors/star'
 import { Collider } from './collider'
-import { Enemy } from './actors/enemy'
+import { Guard } from './actors/guard'
+import { Player } from './actors/player'
 
 export class Game {
   world: World
@@ -21,7 +21,6 @@ export class Game {
   collider: Collider
   actors = new Map<string, Actor>()
   fighters = new Map<string, Fighter>()
-  players = new Map<string, Player>()
   stars = new Map<string, Star>()
   summary: GameSummary
   startPoint = Vec2(0, 0)
@@ -35,7 +34,7 @@ export class Game {
     this.runner = new Runner(this)
     this.collider = new Collider(this)
     this.setupSavePoints()
-    this.setupEnemies()
+    this.setupGuards()
     this.setupIo()
   }
 
@@ -45,11 +44,8 @@ export class Game {
       socket.emit('connected', this.layout.summary)
       const player = new Player(this)
       socket.on('input', (input: InputSummary) => {
-        const move = input.move ?? Vec2(0, 0)
-        player.ally.move.x = move.x ?? 0
-        player.ally.move.y = move.y ?? 0
-        const playerSummary = player.summarize()
-        socket.emit('summary', playerSummary)
+        player.handleInput(input)
+        socket.emit('summary', player.getPlayerSummary())
       })
       socket.on('disconnect', () => {
         console.log('disconnect:', socket.id)
@@ -65,9 +61,9 @@ export class Game {
     })
   }
 
-  setupEnemies (): void {
-    this.layout.enemyPoints.forEach((position, i) => {
-      void new Enemy(this, position)
+  setupGuards (): void {
+    this.layout.guardPoints.forEach((position, i) => {
+      void new Guard(this, position)
     })
   }
 

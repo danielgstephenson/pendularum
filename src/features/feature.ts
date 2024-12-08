@@ -11,4 +11,6 @@ export class Feature {
     this.fixture = this.actor.body.createFixture(fixtureDef)
     this.fixture.setUserData(this)
   }
+
+  onStep (): void {}
 }

@@ -1,15 +1,15 @@
 import { Vec2 } from 'planck'
-import { Player } from '../pilots/player'
 import { GameSummary } from './gameSummary'
+import { Player } from '../actors/player'
 
 export class PlayerSummary {
   game: GameSummary
   id: string
-  savePoint: Vec2
+  spawnPoint: Vec2
 
   constructor (player: Player) {
     this.game = player.game.summary
-    this.id = player.ally.id
-    this.savePoint = player.spawnPoint
+    this.id = player.id
+    this.spawnPoint = player.spawnPoint
   }
 }
