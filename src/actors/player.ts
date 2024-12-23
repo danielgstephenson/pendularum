@@ -35,4 +35,9 @@ export class Player extends Fighter {
   getPlayerSummary (): PlayerSummary {
     return new PlayerSummary(this)
   }
+
+  postStep (): void {
+    super.postStep()
+    console.log('spin', this.spin.toFixed(3))
+  }
 }
