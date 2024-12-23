@@ -17,12 +17,12 @@ export class Player extends Fighter {
   }
 
   respawn (): void {
+    super.respawn()
     const angle = Math.random() * 2 * Math.PI
     const offset = rotate(Vec2(0, 2), angle)
     const startPoint = Vec2.add(this.spawnPoint, offset)
     this.body.setPosition(startPoint)
     this.body.setLinearVelocity(Vec2(0, 0))
-    this.dead = false
   }
 
   handleInput (input: InputSummary): void {
@@ -38,5 +38,8 @@ export class Player extends Fighter {
 
   postStep (): void {
     super.postStep()
+    if (this.dead) {
+      this.respawn()
+    }
   }
 }

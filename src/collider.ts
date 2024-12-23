@@ -8,6 +8,7 @@ import { Player } from './actors/player'
 import { Halo } from './features/halo'
 import { Torso } from './features/torso'
 import { Blade } from './features/blade'
+import { Border } from './features/border'
 
 export class Collider {
   game: Game
@@ -80,6 +81,10 @@ export class Collider {
         return
       }
       if (actorB instanceof Fighter && actorB.dead) {
+        contact.setEnabled(false)
+        return
+      }
+      if (featureA instanceof Blade && featureB instanceof Border) {
         contact.setEnabled(false)
         return
       }

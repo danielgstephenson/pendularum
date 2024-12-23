@@ -66,17 +66,16 @@ export class Fighter extends Actor {
 
   postStep (): void {
     super.postStep()
+    this.updateConfiguration()
     if (this.removed) {
       this.game.fighters.delete(this.id)
-      return
     }
-    if (this.dead) {
-      this.respawn()
-    }
-    this.updateConfiguration()
   }
 
-  respawn (): void {}
+  respawn (): void {
+    console.log('respawn', this.team)
+    this.dead = false
+  }
 
   summarize (): FighterSummary {
     return new FighterSummary(this)
