@@ -2,7 +2,7 @@ import { Vec2 } from 'planck'
 import { Fighter } from './fighter'
 import { Game } from '../game'
 import { Counter } from './counter'
-import { dirFromTo, randomDir, reject } from '../math'
+import { dirFromTo } from '../math'
 import { Halo } from '../features/halo'
 
 export class Guard extends Fighter {
@@ -20,9 +20,7 @@ export class Guard extends Fighter {
 
   respawn (): void {
     this.body.setPosition(this.spawnPoint)
-    this.weapon.body.setPosition(this.spawnPoint)
     this.body.setLinearVelocity(Vec2(0, 0))
-    this.weapon.body.setLinearVelocity(Vec2(0, 0))
     if (this.counter.playerCount === 0) {
       this.dead = false
     }
@@ -45,19 +43,19 @@ export class Guard extends Fighter {
       const point = this.halo.nearGuard.body.getPosition()
       this.move = dirFromTo(point, this.position)
     } else if (this.halo.wallDistance > 4) {
-      const weaponToGuard = dirFromTo(this.weapon.position, this.position)
-      const perp = reject(this.weapon.velocity, weaponToGuard)
-      if (this.halo.playerDistance < 40 && perp.length() > 0.8 * this.weapon.maxSpeed) {
-        if (this.halo.nearPlayer == null) return
-        const point = this.halo.nearPlayer.position
-        this.move = dirFromTo(this.position, point)
-      } else {
-        if (perp.length() === 0) {
-          this.move = randomDir()
-        } else {
-          this.move = Vec2.combine(0.3, weaponToGuard, -0.7, perp)
-        }
-      }
+      // const weaponToGuard = dirFromTo(this.ballChain.position, this.position)
+      // const perp = reject(this.ballChain.velocity, weaponToGuard)
+      // if (this.halo.playerDistance < 40 && perp.length() > 0.8 * this.ballChain.maxSpeed) {
+      //   if (this.halo.nearPlayer == null) return
+      //   const point = this.halo.nearPlayer.position
+      //   this.move = dirFromTo(this.position, point)
+      // } else {
+      //   if (perp.length() === 0) {
+      //     this.move = randomDir()
+      //   } else {
+      //     this.move = Vec2.combine(0.3, weaponToGuard, -0.7, perp)
+      //   }
+      // }
     } else {
       this.move = this.halo.wallAway
     }

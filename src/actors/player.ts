@@ -21,9 +21,7 @@ export class Player extends Fighter {
     const offset = rotate(Vec2(0, 2), angle)
     const startPoint = Vec2.add(this.spawnPoint, offset)
     this.body.setPosition(startPoint)
-    this.weapon.body.setPosition(startPoint)
     this.body.setLinearVelocity(Vec2(0, 0))
-    this.weapon.body.setLinearVelocity(Vec2(0, 0))
     this.dead = false
   }
 
@@ -31,6 +29,7 @@ export class Player extends Fighter {
     const move = input.move ?? Vec2(0, 0)
     this.move.x = move.x ?? 0
     this.move.y = move.y ?? 0
+    this.swing = Math.sign(input.swing)
   }
 
   getPlayerSummary (): PlayerSummary {

@@ -1,15 +1,15 @@
-import { DistanceJoint, Fixture, RopeJoint, Vec2 } from 'planck'
+import { Fixture, RopeJoint, Vec2 } from 'planck'
 import { Actor } from './actor'
 import { Fighter } from './fighter'
-import { Blade } from '../features/blade'
+import { Ball } from '../features/ball'
 import { clampVec } from '../math'
 import { Feature } from '../features/feature'
 import { Torso } from '../features/torso'
 
-export class Weapon extends Actor {
+export class BallChain extends Actor {
   maxSpeed = 10
   fighter: Fighter
-  blade: Blade
+  blade: Ball
   position = Vec2(0, 0)
   velocity = Vec2(0, 0)
   ropeLength: number
@@ -24,14 +24,14 @@ export class Weapon extends Actor {
     })
     this.fighter = fighter
     this.label = 'weapon'
-    this.blade = new Blade(this)
+    this.blade = new Ball(this)
     this.body.setMassData({
       mass: 0.0000001,
       center: Vec2(0, 0),
       I: 0.25
     })
     this.body.setPosition(fighter.body.getPosition())
-    this.ropeLength = Fighter.reach - Blade.radius
+    this.ropeLength = Fighter.reach - Ball.radius
     const ropeJoint = new RopeJoint({
       bodyA: this.fighter.body,
       bodyB: this.body,

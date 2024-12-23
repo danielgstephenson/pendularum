@@ -3,11 +3,11 @@ import { Game } from './game'
 import { Feature } from './features/feature'
 import { Fighter } from './actors/fighter'
 import { Star } from './actors/star'
-import { Weapon } from './actors/weapon'
+import { BallChain } from './actors/ballChain'
 import { Counter } from './actors/counter'
 import { Player } from './actors/player'
 import { Halo } from './features/halo'
-import { Blade } from './features/blade'
+import { Ball } from './features/ball'
 import { Torso } from './features/torso'
 
 export class Collider {
@@ -83,15 +83,15 @@ export class Collider {
         contact.setEnabled(false)
         return
       }
-      if (actorA instanceof Weapon && actorA.fighter.dead) {
+      if (actorA instanceof BallChain && actorA.fighter.dead) {
         contact.setEnabled(false)
         return
       }
-      if (actorB instanceof Weapon && actorB.fighter.dead) {
+      if (actorB instanceof BallChain && actorB.fighter.dead) {
         contact.setEnabled(false)
         return
       }
-      if (featureA instanceof Blade && featureB instanceof Torso) {
+      if (featureA instanceof Ball && featureB instanceof Torso) {
         contact.setEnabled(false)
         const weapon = featureA.weapon
         const fighter = featureB.fighter

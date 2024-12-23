@@ -5,8 +5,8 @@ import { Border } from './border'
 import { dirToFrom, whichMin } from '../math'
 import { Player } from '../actors/player'
 import { Torso } from './torso'
-import { Weapon } from '../actors/weapon'
-import { Blade } from './blade'
+import { BallChain } from '../actors/ballChain'
+import { Ball } from './ball'
 import { Guard } from '../actors/guard'
 import { Star } from '../actors/star'
 
@@ -23,9 +23,9 @@ export class Halo extends Feature {
   players: Player[] = []
   playerDistance: number = Infinity
   nearPlayer?: Player
-  playerWeapons: Weapon[] = []
+  playerWeapons: BallChain[] = []
   playerWeaponDistance: number = Infinity
-  nearPlayerWeapon?: Weapon
+  nearPlayerWeapon?: BallChain
   stars: Star[] = []
   starDistance: number = Infinity
   nearStar?: Star
@@ -59,7 +59,7 @@ export class Halo extends Feature {
     if (otherFeature instanceof Torso && otherFeature.actor instanceof Player) {
       this.players.push(otherFeature.actor)
     }
-    if (otherFeature instanceof Blade && otherFeature.weapon.fighter instanceof Player) {
+    if (otherFeature instanceof Ball && otherFeature.weapon.fighter instanceof Player) {
       this.playerWeapons.push(otherFeature.weapon)
     }
     if (otherActor instanceof Star) {
