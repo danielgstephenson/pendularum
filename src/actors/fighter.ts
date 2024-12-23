@@ -44,6 +44,7 @@ export class Fighter extends Actor {
 
   die (): void {
     this.dead = true
+    console.log('die', this.team)
   }
 
   updateConfiguration (): void {

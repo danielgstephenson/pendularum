@@ -3,12 +3,11 @@ import { Game } from './game'
 import { Feature } from './features/feature'
 import { Fighter } from './actors/fighter'
 import { Star } from './actors/star'
-import { BallChain } from './actors/ballChain'
 import { Counter } from './actors/counter'
 import { Player } from './actors/player'
 import { Halo } from './features/halo'
-import { Ball } from './features/ball'
 import { Torso } from './features/torso'
+import { Blade } from './features/blade'
 
 export class Collider {
   game: Game
@@ -64,6 +63,7 @@ export class Collider {
       const actorB = featureB.actor
       if (actorA instanceof Star || actorB instanceof Star) {
         contact.setEnabled(false)
+        return
       }
       if (featureA instanceof Halo) {
         featureA.onCollide(contact)
@@ -83,20 +83,13 @@ export class Collider {
         contact.setEnabled(false)
         return
       }
-      if (actorA instanceof BallChain && actorA.fighter.dead) {
+      if (featureA instanceof Blade && featureB instanceof Torso) {
         contact.setEnabled(false)
-        return
-      }
-      if (actorB instanceof BallChain && actorB.fighter.dead) {
-        contact.setEnabled(false)
-        return
-      }
-      if (featureA instanceof Ball && featureB instanceof Torso) {
-        contact.setEnabled(false)
-        const weapon = featureA.weapon
-        const fighter = featureB.fighter
-        if (fighter.team !== weapon.fighter.team) {
-          fighter.die()
+        const fighterA = featureA.fighter
+        const fighterB = featureB.fighter
+        console.log('death', fighterA.team, fighterB.team, fighterA.dead, fighterB.dead)
+        if (fighterA.team !== fighterB.team) {
+          fighterB.die()
         }
       }
     })

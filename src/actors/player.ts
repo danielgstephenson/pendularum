@@ -38,6 +38,5 @@ export class Player extends Fighter {
 
   postStep (): void {
     super.postStep()
-    console.log('spin', this.spin.toFixed(3))
   }
 }

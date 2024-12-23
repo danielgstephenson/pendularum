@@ -5,8 +5,6 @@ import { Border } from './border'
 import { dirToFrom, whichMin } from '../math'
 import { Player } from '../actors/player'
 import { Torso } from './torso'
-import { BallChain } from '../actors/ballChain'
-import { Ball } from './ball'
 import { Guard } from '../actors/guard'
 import { Star } from '../actors/star'
 
@@ -23,9 +21,7 @@ export class Halo extends Feature {
   players: Player[] = []
   playerDistance: number = Infinity
   nearPlayer?: Player
-  playerWeapons: BallChain[] = []
   playerWeaponDistance: number = Infinity
-  nearPlayerWeapon?: BallChain
   stars: Star[] = []
   starDistance: number = Infinity
   nearStar?: Star
@@ -59,9 +55,6 @@ export class Halo extends Feature {
     if (otherFeature instanceof Torso && otherFeature.actor instanceof Player) {
       this.players.push(otherFeature.actor)
     }
-    if (otherFeature instanceof Ball && otherFeature.weapon.fighter instanceof Player) {
-      this.playerWeapons.push(otherFeature.weapon)
-    }
     if (otherActor instanceof Star) {
       this.stars.push(otherActor)
     }
@@ -71,7 +64,6 @@ export class Halo extends Feature {
     this.wallPoints = []
     this.guards = []
     this.players = []
-    this.playerWeapons = []
     this.stars = []
   }
 
@@ -94,12 +86,6 @@ export class Halo extends Feature {
       const distances = points.map(point => Vec2.distance(position, point))
       this.playerDistance = Math.min(...distances)
       this.nearPlayer = this.players[whichMin(distances)]
-    }
-    if (this.playerWeapons.length > 0) {
-      const points = this.playerWeapons.map(actor => actor.body.getPosition())
-      const distances = points.map(point => Vec2.distance(position, point))
-      this.playerWeaponDistance = Math.min(...distances)
-      this.nearPlayerWeapon = this.playerWeapons[whichMin(distances)]
     }
     if (this.stars.length > 0) {
       const points = this.stars.map(actor => actor.body.getPosition())
