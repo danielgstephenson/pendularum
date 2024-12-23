@@ -7,11 +7,12 @@ import { Feature } from '../features/feature'
 import { Torso } from '../features/torso'
 
 export class Weapon extends Actor {
+  maxSpeed = 10
   fighter: Fighter
   blade: Blade
-  maxSpeed = 20
   position = Vec2(0, 0)
   velocity = Vec2(0, 0)
+  ropeLength: number
 
   constructor (fighter: Fighter) {
     super(fighter.game, {
@@ -30,24 +31,25 @@ export class Weapon extends Actor {
       I: 0.25
     })
     this.body.setPosition(fighter.body.getPosition())
-    const distanceJoint = new DistanceJoint({
-      bodyA: this.fighter.body,
-      bodyB: this.body,
-      localAnchorA: Vec2(0, 0),
-      localAnchorB: Vec2(0, 0),
-      frequencyHz: 0.25,
-      collideConnected: false
-    })
-    this.game.world.createJoint(distanceJoint)
+    this.ropeLength = Fighter.reach - Blade.radius
     const ropeJoint = new RopeJoint({
       bodyA: this.fighter.body,
       bodyB: this.body,
       localAnchorA: Vec2(0, 0),
       localAnchorB: Vec2(0, 0),
-      maxLength: 3,
+      maxLength: this.ropeLength,
       collideConnected: false
     })
     this.game.world.createJoint(ropeJoint)
+    // const distanceJoint = new DistanceJoint({
+    //   bodyA: this.fighter.body,
+    //   bodyB: this.body,
+    //   localAnchorA: Vec2(0, 0),
+    //   localAnchorB: Vec2(0, 0),
+    //   dampingRatio: 0,
+    //   frequencyHz: 0.5
+    // })
+    // this.game.world.createJoint(distanceJoint)
   }
 
   updateConfiguration (): void {
@@ -59,6 +61,7 @@ export class Weapon extends Actor {
   postStep (): void {
     super.postStep()
     this.updateConfiguration()
+    if (this.fighter.dead) return
     this.attack()
   }
 

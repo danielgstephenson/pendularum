@@ -14,6 +14,10 @@ export function dirToFrom (to: Vec2, from: Vec2): Vec2 {
   return normalize(Vec2.sub(to, from))
 }
 
+export function dirFromTo (from: Vec2, to: Vec2): Vec2 {
+  return normalize(Vec2.sub(to, from))
+}
+
 export function vecToAngle (vector: Vec2): number {
   return Math.atan2(vector.y, vector.x)
 }
@@ -32,6 +36,10 @@ export function rotate (vector: Vec2, angle: number): Vec2 {
   const x = vector.x * Math.cos(angle) - vector.y * Math.sin(angle)
   const y = vector.x * Math.sin(angle) + vector.y * Math.cos(angle)
   return Vec2(x, y)
+}
+
+export function randomDir (): Vec2 {
+  return rotate(Vec2(1, 0), 2 * Math.PI * Math.random())
 }
 
 export function clamp (a: number, b: number, x: number): number {
@@ -64,4 +72,15 @@ export function whichMin (array: number[]): number {
 
 export function choose<type> (array: type[]): type {
   return array[Math.floor(Math.random() * array.length)]
+}
+
+export function project (a: Vec2, b: Vec2): Vec2 {
+  const ab = Vec2.dot(a, b)
+  const bb = Vec2.dot(b, b)
+  if (ab === 0 || bb === 0) return Vec2(0, 0)
+  return Vec2.mul(ab / bb, b)
+}
+
+export function reject (a: Vec2, b: Vec2): Vec2 {
+  return Vec2.sub(a, project(a, b))
 }

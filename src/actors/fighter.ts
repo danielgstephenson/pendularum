@@ -7,8 +7,9 @@ import { FighterSummary } from '../summaries/fighterSummary'
 import { Weapon } from './weapon'
 
 export class Fighter extends Actor {
-  movePower = 4
-  maxSpeed = 4
+  static reach = 3
+  movePower = 6
+  maxSpeed = 3
   position = Vec2(0, 0)
   velocity = Vec2(0, 0)
   move = Vec2(0, 0)

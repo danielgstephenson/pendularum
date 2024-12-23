@@ -2,7 +2,7 @@ import { Vec2 } from 'planck'
 import { Fighter } from './fighter'
 import { Game } from '../game'
 import { Counter } from './counter'
-import { dirToFrom } from '../math'
+import { dirFromTo, randomDir, reject } from '../math'
 import { Halo } from '../features/halo'
 
 export class Guard extends Fighter {
@@ -36,15 +36,30 @@ export class Guard extends Fighter {
   postStep (): void {
     super.postStep()
     this.halo.postStep()
-    this.move = this.halo.wallAway
-    if (this.halo.guardDistance < 3) {
+    if (this.halo.starDistance < 10) {
+      if (this.halo.nearStar == null) return
+      const point = this.halo.nearStar.body.getPosition()
+      this.move = dirFromTo(point, this.position)
+    } else if (this.halo.guardDistance < 4) {
       if (this.halo.nearGuard == null) return
       const point = this.halo.nearGuard.body.getPosition()
-      this.move = dirToFrom(this.body.getPosition(), point)
-    } else if (this.halo.playerDistance < 20 && this.halo.wallDistance > 4) {
-      if (this.halo.nearPlayer == null) return
-      const point = this.halo.nearPlayer.body.getPosition()
-      this.move = dirToFrom(point, this.body.getPosition())
+      this.move = dirFromTo(point, this.position)
+    } else if (this.halo.wallDistance > 4) {
+      const weaponToGuard = dirFromTo(this.weapon.position, this.position)
+      const perp = reject(this.weapon.velocity, weaponToGuard)
+      if (this.halo.playerDistance < 40 && perp.length() > 0.8 * this.weapon.maxSpeed) {
+        if (this.halo.nearPlayer == null) return
+        const point = this.halo.nearPlayer.position
+        this.move = dirFromTo(this.position, point)
+      } else {
+        if (perp.length() === 0) {
+          this.move = randomDir()
+        } else {
+          this.move = Vec2.combine(0.3, weaponToGuard, -0.7, perp)
+        }
+      }
+    } else {
+      this.move = this.halo.wallAway
     }
   }
 }

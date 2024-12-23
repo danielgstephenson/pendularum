@@ -62,6 +62,9 @@ export class Collider {
       const featureB = pair[1]
       const actorA = featureA.actor
       const actorB = featureB.actor
+      if (actorA instanceof Star || actorB instanceof Star) {
+        contact.setEnabled(false)
+      }
       if (featureA instanceof Halo) {
         featureA.onCollide(contact)
         contact.setEnabled(false)

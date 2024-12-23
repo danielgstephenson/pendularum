@@ -12,8 +12,7 @@ export class Star extends Actor {
     super(game, { type: 'static' })
     this.label = 'savePoint'
     this.feature = new Feature(this, {
-      shape: new Circle(Vec2(0, 0), Star.radius),
-      isSensor: true
+      shape: new Circle(Vec2(0, 0), Star.radius)
     })
     this.feature.label = 'savePoint'
     this.body.setPosition(position)

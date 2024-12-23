@@ -8,6 +8,7 @@ import { Torso } from './torso'
 import { Weapon } from '../actors/weapon'
 import { Blade } from './blade'
 import { Guard } from '../actors/guard'
+import { Star } from '../actors/star'
 
 export class Halo extends Feature {
   static radius = 25
@@ -25,6 +26,9 @@ export class Halo extends Feature {
   playerWeapons: Weapon[] = []
   playerWeaponDistance: number = Infinity
   nearPlayerWeapon?: Weapon
+  stars: Star[] = []
+  starDistance: number = Infinity
+  nearStar?: Star
 
   constructor (fighter: Fighter) {
     super(fighter, {
@@ -41,6 +45,7 @@ export class Halo extends Feature {
     const featureA = contact.getFixtureA().getUserData() as Feature
     const featureB = contact.getFixtureB().getUserData() as Feature
     const otherFeature = featureA === this ? featureB : featureA
+    const otherActor = otherFeature.actor
     const worldManifold = contact.getWorldManifold(null)
     if (worldManifold == null) return
     if (worldManifold.points.length === 0) return
@@ -57,6 +62,9 @@ export class Halo extends Feature {
     if (otherFeature instanceof Blade && otherFeature.weapon.fighter instanceof Player) {
       this.playerWeapons.push(otherFeature.weapon)
     }
+    if (otherActor instanceof Star) {
+      this.stars.push(otherActor)
+    }
   }
 
   preStep (): void {
@@ -64,6 +72,7 @@ export class Halo extends Feature {
     this.guards = []
     this.players = []
     this.playerWeapons = []
+    this.stars = []
   }
 
   postStep (): void {
@@ -75,22 +84,28 @@ export class Halo extends Feature {
       this.wallAway = dirToFrom(position, nearPoint)
     }
     if (this.guards.length > 0) {
-      const points = this.guards.map(player => player.body.getPosition())
+      const points = this.guards.map(actor => actor.body.getPosition())
       const distances = points.map(point => Vec2.distance(position, point))
       this.guardDistance = Math.min(...distances)
       this.nearGuard = this.guards[whichMin(distances)]
     }
     if (this.players.length > 0) {
-      const points = this.players.map(player => player.body.getPosition())
+      const points = this.players.map(actor => actor.body.getPosition())
       const distances = points.map(point => Vec2.distance(position, point))
       this.playerDistance = Math.min(...distances)
       this.nearPlayer = this.players[whichMin(distances)]
     }
     if (this.playerWeapons.length > 0) {
-      const points = this.playerWeapons.map(player => player.body.getPosition())
+      const points = this.playerWeapons.map(actor => actor.body.getPosition())
       const distances = points.map(point => Vec2.distance(position, point))
       this.playerWeaponDistance = Math.min(...distances)
       this.nearPlayerWeapon = this.playerWeapons[whichMin(distances)]
+    }
+    if (this.stars.length > 0) {
+      const points = this.stars.map(actor => actor.body.getPosition())
+      const distances = points.map(point => Vec2.distance(position, point))
+      this.starDistance = Math.min(...distances)
+      this.nearStar = this.stars[whichMin(distances)]
     }
   }
 }
