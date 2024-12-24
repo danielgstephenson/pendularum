@@ -9,6 +9,6 @@ export class LayoutSummary {
   constructor (layout: Layout) {
     this.boundary = layout.boundary
     this.gaps = layout.gaps
-    this.savePoints = layout.savePoints
+    this.savePoints = layout.starPoints
   }
 }

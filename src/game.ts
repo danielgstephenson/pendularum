@@ -55,7 +55,7 @@ export class Game {
   }
 
   setupSavePoints (): void {
-    this.layout.savePoints.forEach((position, i) => {
+    this.layout.starPoints.forEach((position, i) => {
       void new Star(this, position)
       if (i === 0) this.startPoint = position
     })

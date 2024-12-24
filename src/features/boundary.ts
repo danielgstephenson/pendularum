@@ -2,7 +2,7 @@ import { Chain, Vec2 } from 'planck'
 import { Cavern } from '../actors/cavern'
 import { Feature } from './feature'
 
-export class Border extends Feature {
+export class Boundary extends Feature {
   cavern: Cavern
 
   constructor (cavern: Cavern, vertices: Vec2[]) {

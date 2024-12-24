@@ -9,7 +9,8 @@ export class Layout {
   svg: INode
   boundary: Vec2[]
   gaps: Vec2[][]
-  savePoints: Vec2[] = []
+  guardAreas: Vec2[][]
+  starPoints: Vec2[] = []
   guardPoints: Vec2[] = []
   summary: LayoutSummary
 
@@ -24,9 +25,20 @@ export class Layout {
     this.svg = parseSvg(svgString)
     this.boundary = this.getBorder()
     this.gaps = this.getGaps()
-    this.savePoints = this.getSavePoints()
+    this.guardAreas = this.getGuardAreas()
+    this.starPoints = this.getStarPoints()
     this.guardPoints = this.getGuardPoints()
     this.summary = new LayoutSummary(this)
+  }
+
+  getStarPoints (): Vec2[] {
+    const starLayer = this.svg.children[6]
+    const starPoints = starLayer.children.map(child => {
+      const x = Number(child.attributes.cx)
+      const y = Number(child.attributes.cy)
+      return Vec2(x, -y)
+    })
+    return starPoints
   }
 
   getGuardPoints (): Vec2[] {
@@ -39,14 +51,13 @@ export class Layout {
     return guardPoints
   }
 
-  getSavePoints (): Vec2[] {
-    const savePointLayer = this.svg.children[4]
-    const savePoints = savePointLayer.children.map(child => {
-      const x = Number(child.attributes.cx)
-      const y = Number(child.attributes.cy)
-      return Vec2(x, -y)
+  getGuardAreas (): Vec2[][] {
+    const guardAreaLayer = this.svg.children[4]
+    const guardAreas = guardAreaLayer.children.map(gapSvg => {
+      const guardAreaPath = gapSvg.attributes.d
+      return this.pathToPoints(guardAreaPath)
     })
-    return savePoints
+    return guardAreas
   }
 
   getGaps (): Vec2[][] {

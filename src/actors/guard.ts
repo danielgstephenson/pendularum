@@ -1,20 +1,22 @@
 import { Vec2 } from 'planck'
 import { Fighter } from './fighter'
 import { Game } from '../game'
-import { Counter } from './counter'
-import { Halo } from '../features/halo'
+import { GuardArea } from '../features/guardArea'
 
 export class Guard extends Fighter {
-  counter: Counter
   spawnPoint: Vec2
-  halo: Halo
+  guardArea: GuardArea
 
   constructor (game: Game, position: Vec2) {
     super(game, position)
     this.spawnPoint = position
     this.team = 2
-    this.counter = new Counter(this)
-    this.halo = new Halo(this)
+    const guardAreas = this.game.cavern.guardAreas.filter(guardArea => {
+      const worldTransform = guardArea.actor.body.getTransform()
+      return guardArea.polygon.testPoint(worldTransform, this.spawnPoint)
+    })
+    if (guardAreas.length === 0) throw new Error(`No guardArea at (${this.spawnPoint.x},${this.spawnPoint.y})`)
+    this.guardArea = guardAreas[0]
   }
 
   respawn (): void {
@@ -25,13 +27,11 @@ export class Guard extends Fighter {
 
   preStep (): void {
     super.preStep()
-    this.halo.preStep()
   }
 
   postStep (): void {
     super.postStep()
-    this.halo.postStep()
-    if (this.dead && this.counter.playerCount === 0) {
+    if (this.dead && this.guardArea.players.size === 0) {
       this.respawn()
     }
   }

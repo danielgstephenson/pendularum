@@ -1,20 +1,25 @@
 import { Game } from '../game'
 import { Actor } from './actor'
-import { Border } from '../features/border'
-import { Vec2 } from 'planck'
+import { Boundary } from '../features/boundary'
+import { GuardArea } from '../features/guardArea'
 
 export class Cavern extends Actor {
+  outerBoundary: Boundary
+  innerBoundaries: Boundary[] = []
+  guardAreas: GuardArea[] = []
+
   constructor (game: Game) {
     super(game, {
       type: 'static'
     })
-    this.addBorder(this.game.layout.boundary)
-    this.game.layout.gaps.forEach(gap => {
-      this.addBorder(gap)
+    this.outerBoundary = new Boundary(this, this.game.layout.boundary)
+    this.game.layout.gaps.forEach(vertices => {
+      const innerBoundary = new Boundary(this, vertices)
+      this.innerBoundaries.push(innerBoundary)
     })
-  }
-
-  addBorder (vertices: Vec2[]): Border {
-    return new Border(this, vertices)
+    this.game.layout.guardAreas.forEach(vertices => {
+      const guardArea = new GuardArea(this, vertices)
+      this.guardAreas.push(guardArea)
+    })
   }
 }

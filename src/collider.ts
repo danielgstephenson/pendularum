@@ -3,12 +3,11 @@ import { Game } from './game'
 import { Feature } from './features/feature'
 import { Fighter } from './actors/fighter'
 import { Star } from './actors/star'
-import { Counter } from './actors/counter'
 import { Player } from './actors/player'
-import { Halo } from './features/halo'
 import { Torso } from './features/torso'
 import { Blade } from './features/blade'
-import { Border } from './features/border'
+import { Boundary } from './features/boundary'
+import { GuardArea } from './features/guardArea'
 
 export class Collider {
   game: Game
@@ -32,8 +31,8 @@ export class Collider {
       if (actorA instanceof Player && featureA instanceof Torso && actorB instanceof Star) {
         actorA.spawnPoint = actorB.position
       }
-      if (actorA instanceof Player && featureA instanceof Torso && actorB instanceof Counter) {
-        actorB.playerCount += 1
+      if (actorA instanceof Player && featureA instanceof Torso && featureB instanceof GuardArea) {
+        featureB.players.set(actorA.id, actorA)
       }
     })
   }
@@ -46,9 +45,8 @@ export class Collider {
       const featureA = pair[0]
       const featureB = pair[1]
       const actorA = featureA.actor
-      const actorB = featureB.actor
-      if (actorA instanceof Player && actorB instanceof Counter) {
-        actorB.playerCount -= 1
+      if (actorA instanceof Player && featureA instanceof Torso && featureB instanceof GuardArea) {
+        featureB.players.delete(actorA.id)
       }
     })
   }
@@ -66,16 +64,6 @@ export class Collider {
         contact.setEnabled(false)
         return
       }
-      if (featureA instanceof Halo) {
-        featureA.onCollide(contact)
-        contact.setEnabled(false)
-        return
-      }
-      if (featureB instanceof Halo) {
-        featureB.onCollide(contact)
-        contact.setEnabled(false)
-        return
-      }
       if (actorA instanceof Fighter && actorA.dead) {
         contact.setEnabled(false)
         return
@@ -84,7 +72,7 @@ export class Collider {
         contact.setEnabled(false)
         return
       }
-      if (featureA instanceof Blade && featureB instanceof Border) {
+      if (featureA instanceof Blade && featureB instanceof Boundary) {
         contact.setEnabled(false)
         return
       }

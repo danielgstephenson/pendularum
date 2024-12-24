@@ -9,8 +9,8 @@ import { Blade } from '../features/blade'
 export class Fighter extends Actor {
   static reach = 3
   movePower = 3
-  swingPower = 0.2 * Math.PI
-  maxSpeed = 2
+  maxSpeed = 3
+  swingPower = 0.3 * Math.PI
   maxSpin = 0.5 * Math.PI
   position = Vec2(0, 0)
   velocity = Vec2(0, 0)
@@ -60,8 +60,8 @@ export class Fighter extends Actor {
     const moveVector = this.move.length() > 0 ? this.move : Vec2.mul(this.velocity, -1)
     const force = Vec2.mul(normalize(moveVector), this.movePower)
     this.body.applyForce(force, this.body.getPosition())
-    this.swing = Math.sign(this.swing)
-    this.body.applyTorque(this.swing * this.swingPower)
+    const swing = this.swing === 0 ? -Math.sign(this.spin) : Math.sign(this.swing)
+    this.body.applyTorque(swing * this.swingPower)
   }
 
   postStep (): void {
