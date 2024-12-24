@@ -22,4 +22,9 @@ export class Cavern extends Actor {
       this.guardAreas.push(guardArea)
     })
   }
+
+  preStep (): void {
+    super.preStep()
+    this.guardAreas.forEach(guardArea => guardArea.preStep())
+  }
 }

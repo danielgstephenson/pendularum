@@ -21,6 +21,8 @@ export class Game {
   collider: Collider
   actors = new Map<string, Actor>()
   fighters = new Map<string, Fighter>()
+  players = new Map<string, Player>()
+  guards = new Map<string, Guard>()
   stars = new Map<string, Star>()
   summary: GameSummary
   startPoint = Vec2(0, 0)

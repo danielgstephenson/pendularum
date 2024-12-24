@@ -3,7 +3,7 @@ import { clamp } from '../math'
 
 export class Camera {
   position = Vec2(0, 0)
-  zoom = 0
+  zoom = 2
   scale = 1
   maxZoom = 15
   minZoom = -15
@@ -15,6 +15,6 @@ export class Camera {
   adjustZoom (change: number): void {
     this.zoom = clamp(this.minZoom, this.maxZoom, this.zoom + change)
     this.scale = 0.02 * Math.exp(0.1 * this.zoom)
-    // console.log('zoom:', this.zoom)
+    console.log('zoom:', this.zoom)
   }
 }

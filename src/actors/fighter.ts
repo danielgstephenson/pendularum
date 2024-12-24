@@ -8,12 +8,13 @@ import { Blade } from '../features/blade'
 
 export class Fighter extends Actor {
   static reach = 3
-  movePower = 3
-  maxSpeed = 3
-  swingPower = 0.3 * Math.PI
-  maxSpin = 0.5 * Math.PI
+  movePower = 10
+  maxSpeed = 2
+  swingPower = 0.6 * Math.PI
+  maxSpin = 1 * Math.PI
   position = Vec2(0, 0)
   velocity = Vec2(0, 0)
+  angle = 0
   spin = 0
   move = Vec2(0, 0)
   swing = 0
@@ -51,6 +52,7 @@ export class Fighter extends Actor {
     this.position = this.body.getPosition()
     this.velocity = clampVec(this.body.getLinearVelocity(), this.maxSpeed)
     this.body.setLinearVelocity(this.velocity)
+    this.angle = this.body.getAngle()
     this.spin = clamp(-this.maxSpin, this.maxSpin, this.body.getAngularVelocity())
     this.body.setAngularVelocity(this.spin)
   }
@@ -74,10 +76,18 @@ export class Fighter extends Actor {
 
   respawn (): void {
     console.log('respawn', this.team)
+    this.body.setLinearVelocity(Vec2(0, 0))
+    this.body.setAngle(Math.random() * 2 * Math.PI)
+    this.body.setAngularVelocity(0)
     this.dead = false
   }
 
   summarize (): FighterSummary {
     return new FighterSummary(this)
+  }
+
+  remove (): void {
+    super.remove()
+    this.game.fighters.delete(this.id)
   }
 }

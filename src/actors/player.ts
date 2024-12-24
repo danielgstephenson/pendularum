@@ -11,6 +11,7 @@ export class Player extends Fighter {
   constructor (game: Game) {
     super(game, game.startPoint)
     this.game = game
+    this.game.players.set(this.id, this)
     this.spawnPoint = this.game.startPoint
     this.team = 1
     this.respawn()
@@ -41,5 +42,11 @@ export class Player extends Fighter {
     if (this.dead) {
       this.respawn()
     }
+  }
+
+  remove (): void {
+    super.remove()
+    this.dead = true
+    this.game.players.delete(this.id)
   }
 }

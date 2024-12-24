@@ -18,4 +18,10 @@ export class GuardArea extends Feature {
     this.cavern = cavern
     this.label = 'guardArea'
   }
+
+  preStep (): void {
+    this.players.forEach(player => {
+      if (player.dead) this.players.delete(player.id)
+    })
+  }
 }

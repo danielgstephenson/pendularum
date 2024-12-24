@@ -26,16 +26,17 @@ export class Actor {
     return fixtures
   }
 
-  preStep (): void {}
+  preStep (): void {
+  }
 
   postStep (): void {
     if (this.removed) {
       this.game.world.destroyBody(this.body)
-      this.game.actors.delete(this.id)
     }
   }
 
   remove (): void {
+    this.game.actors.delete(this.id)
     this.removed = true
   }
 }
