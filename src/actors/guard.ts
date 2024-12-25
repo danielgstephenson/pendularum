@@ -3,14 +3,15 @@ import { Fighter } from './fighter'
 import { Game } from '../game'
 import { GuardArea } from '../features/guardArea'
 import { Player } from './player'
-import { dirFromTo, getAngleDiff, vecToAngle, whichMin } from '../math'
+import { clamp, dirFromTo, getAngleDiff, normalize, project, rotate, vecToAngle, whichMin } from '../math'
 import { Blade } from '../features/blade'
+import { Torso } from '../features/torso'
 
 export class Guard extends Fighter {
   spawnPoint: Vec2
   guardArea: GuardArea
-  pullBack = 0
-  swingDistance = 0
+  pullBack = 0.0 * Math.PI
+  swingDistance = Blade.reach + Torso.radius
 
   constructor (game: Game, position: Vec2) {
     super(game, position)
@@ -29,8 +30,7 @@ export class Guard extends Fighter {
   respawn (): void {
     super.respawn()
     this.body.setPosition(this.spawnPoint)
-    this.pullBack = (2 * Math.random() - 1) * Math.PI
-    this.swingDistance = Blade.reach * (1.2 + Math.random())
+    this.pullBack = Math.sign(Math.random() - 0.5) * this.pullBack
   }
 
   preStep (): void {
@@ -42,7 +42,7 @@ export class Guard extends Fighter {
     const player = this.getNearestPlayer()
     if (player == null) return
     const playerDistance = Vec2.distance(this.position, player.position)
-    if (this.dead && this.guardArea.players.size === 0 && playerDistance > 30) {
+    if (this.dead && this.guardArea.players.size === 0 && playerDistance > 10) {
       this.respawn()
     }
     this.planSwing()
@@ -57,11 +57,15 @@ export class Guard extends Fighter {
       this.move = distToHome > 1 ? dirToHome : Vec2(0, 0)
       return
     }
+
     const distToPlayer = Vec2.distance(this.position, player.position)
     const dirToPlayer = dirFromTo(this.position, player.position)
-    const dirFromPlayer = Vec2.mul(-1, dirToPlayer)
-    const targetDist = 0.7 * Blade.reach
-    this.move = distToPlayer > targetDist ? dirToPlayer : dirFromPlayer
+    const dirFromPlayerBlade = dirFromTo(player.bladePosition, this.position)
+    const sideDir = rotate(dirToPlayer, 0.5 * Math.PI)
+    const circleDir = normalize(project(dirFromPlayerBlade, sideDir))
+    const circleWeight = clamp(0, 1, (3 + Blade.reach - distToPlayer) / 5)
+    const moveDir = Vec2.combine(circleWeight, circleDir, 1 - circleWeight, dirToPlayer)
+    this.move = moveDir
   }
 
   planSwing (): void {
@@ -70,14 +74,16 @@ export class Guard extends Fighter {
     const distToPlayer = Vec2.distance(this.position, player.position)
     const dirToPlayer = dirFromTo(this.position, player.position)
     const angleToPlayer = vecToAngle(dirToPlayer)
+    const playerBladePosition = Vec2.combine(0.1, player.position, 0.9, player.bladePosition)
+    const angleToPlayerBlade = vecToAngle(dirFromTo(this.position, playerBladePosition))
     const hardSwing = this.getHardSwing(angleToPlayer)
-    const softSwing = this.getSoftSwing(angleToPlayer + this.pullBack)
+    const softSwing = this.getSoftSwing(angleToPlayerBlade)
     this.swing = distToPlayer < this.swingDistance ? hardSwing : softSwing
   }
 
   getSoftSwing (targetAngle: number): number {
     const angleDiff = getAngleDiff(targetAngle, this.angle)
-    const targetSpin = 2 * angleDiff
+    const targetSpin = 4 * angleDiff
     return Math.sign(targetSpin - this.spin)
   }
 

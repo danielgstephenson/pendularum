@@ -23,15 +23,15 @@
      inkscape:document-units="in"
      showgrid="true"
      units="mm"
-     inkscape:zoom="2.0737236"
-     inkscape:cx="163.23294"
-     inkscape:cy="162.02738"
+     inkscape:zoom="2.932688"
+     inkscape:cx="145.08874"
+     inkscape:cy="468.85315"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="1912"
      inkscape:window-y="-12"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer4"
      pagecolor="#242424"
      width="100mm"
      fit-margin-top="0"
@@ -61,18 +61,20 @@
   <g
      inkscape:label="Border"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     sodipodi:insensitive="true">
     <path
        id="rect2617"
        style="fill:#060606;fill-opacity:1;stroke-width:5.43908;stroke-linecap:round"
-       d="M 40,105 20.000001,85 20,40 45,15 V -5 L 30,-20 v -30 h 45 v 30 L 60,-5 v 20 l 24.999997,25 2e-6,45 L 65,105 v 20 l -5,10 H 45 l -5,-10 z"
+       d="M 40,105 20.000001,85 20,40 45,15 V -5 L 30,-20 v -30 h 45 v 30 L 60,-5 v 20 l 24.999997,25 2e-6,45 L 65,105 v 60 l -5,5 H 45 l -5,-5 z"
        sodipodi:nodetypes="ccccccccccccccccccc"
        inkscape:label="path" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer3"
-     inkscape:label="Gaps">
+     inkscape:label="Gaps"
+     sodipodi:insensitive="true">
     <path
        id="rect6411"
        style="display:inline;mix-blend-mode:normal;fill:#242424;fill-opacity:1;stroke-width:2.6416;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
@@ -94,7 +96,7 @@
        id="rect2749"
        style="fill:none;stroke:#089900;stroke-width:0.508;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.2"
        inkscape:label="guardArea"
-       d="m 20,85 h 65 v 35 H 20 Z"
+       d="m 20,85 h 65 v 60 H 20 Z"
        sodipodi:nodetypes="ccccc" />
     <path
        id="rect2749-2"
@@ -123,77 +125,7 @@
        style="fill:#008000;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
        id="path845-9-9-5"
        cx="52.5"
-       cy="105"
-       inkscape:label="guard"
-       r="1" />
-    <circle
-       style="fill:#008000;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
-       id="path845-9-9-5-18"
-       cx="40"
-       cy="95"
-       inkscape:label="guard"
-       r="1" />
-    <circle
-       style="fill:#008000;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
-       id="path845-9-9-5-2"
-       cx="65"
-       cy="95"
-       inkscape:label="guard"
-       r="1" />
-    <circle
-       style="fill:#008000;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
-       id="path845-9-9-5-7"
-       cx="30"
-       cy="65"
-       inkscape:label="guard"
-       r="1" />
-    <circle
-       style="fill:#008000;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
-       id="path845-9-9-5-79"
-       cx="30"
-       cy="80"
-       inkscape:label="guard"
-       r="1" />
-    <circle
-       style="fill:#008000;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
-       id="path845-9-9-5-1"
-       cx="75"
-       cy="65"
-       inkscape:label="guard"
-       r="1" />
-    <circle
-       style="fill:#008000;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
-       id="path845-9-9-5-1-4"
-       cx="52.5"
-       cy="20"
-       inkscape:label="guard"
-       r="1" />
-    <circle
-       style="fill:#008000;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
-       id="path845-9-9-5-1-4-2"
-       cx="52.5"
-       cy="35"
-       inkscape:label="guard"
-       r="1" />
-    <circle
-       style="fill:#008000;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
-       id="path845-9-9-5-16"
-       cx="75"
-       cy="80"
-       inkscape:label="guard"
-       r="1" />
-    <circle
-       style="fill:#008000;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
-       id="path845-9-9-5-1-4-9-0"
-       cx="35"
-       cy="45"
-       inkscape:label="guard"
-       r="1" />
-    <circle
-       style="fill:#008000;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
-       id="path845-9-9-5-1-4-9-5"
-       cx="70"
-       cy="45"
+       cy="130"
        inkscape:label="guard"
        r="1" />
   </g>
@@ -205,7 +137,7 @@
        style="fill:#ffff00;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
        id="path845"
        cx="52.5"
-       cy="127.5"
+       cy="157.5"
        inkscape:label="star"
        r="1" />
     <circle

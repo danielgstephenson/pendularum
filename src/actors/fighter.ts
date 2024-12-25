@@ -1,7 +1,7 @@
 import { Vec2 } from 'planck'
 import { Game } from '../game'
 import { Actor } from './actor'
-import { clamp, clampVec, normalize } from '../math'
+import { clamp, clampVec, normalize, rotate } from '../math'
 import { Torso } from '../features/torso'
 import { FighterSummary } from '../summaries/fighterSummary'
 import { Blade } from '../features/blade'
@@ -13,6 +13,7 @@ export class Fighter extends Actor {
   swingPower = 0.6 * Math.PI
   maxSpin = 1 * Math.PI
   position = Vec2(0, 0)
+  bladePosition = Vec2(0, 0)
   velocity = Vec2(0, 0)
   angle = 0
   spin = 0
@@ -52,6 +53,8 @@ export class Fighter extends Actor {
     this.velocity = clampVec(this.body.getLinearVelocity(), this.maxSpeed)
     this.body.setLinearVelocity(this.velocity)
     this.angle = this.body.getAngle()
+    const bladeVector = rotate(Vec2(Blade.reach, 0), this.angle)
+    this.bladePosition = Vec2.add(this.position, bladeVector)
     this.spin = clamp(-this.maxSpin, this.maxSpin, this.body.getAngularVelocity())
     this.body.setAngularVelocity(this.spin)
   }
