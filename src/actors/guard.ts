@@ -11,7 +11,7 @@ export class Guard extends Fighter {
   spawnPoint: Vec2
   guardArea: GuardArea
   pullBack = 0.0 * Math.PI
-  swingDistance = Blade.reach + Torso.radius
+  swingDistance = Blade.reach + Torso.radius + 1
 
   constructor (game: Game, position: Vec2) {
     super(game, position)
@@ -73,17 +73,17 @@ export class Guard extends Fighter {
     const distToPlayer = Vec2.distance(this.position, player.position)
     const dirToPlayer = dirFromTo(this.position, player.position)
     const angleToPlayer = vecToAngle(dirToPlayer)
-    // const playerBladePosition = Vec2.combine(0.1, player.position, 0.9, player.bladePosition)
-    // const angleToPlayerBlade = vecToAngle(dirFromTo(this.position, playerBladePosition))
-    const blockAngle = angleToPlayer + 0.2 * Math.PI * Math.sign(player.spin)
+    const playerBladePosition = Vec2.combine(0.1, player.position, 0.9, player.bladePosition)
+    const blockAngle = vecToAngle(dirFromTo(this.position, playerBladePosition))
+    // const blockAngle = angleToPlayer + 0.2 * Math.PI * Math.sign(player.spin)
     const attackSwing = this.getHardSwing(angleToPlayer)
-    const holdSwing = this.getSoftSwing(blockAngle)
-    this.swing = distToPlayer < this.swingDistance ? attackSwing : holdSwing
+    const blockSwing = this.getSoftSwing(blockAngle)
+    this.swing = distToPlayer < this.swingDistance ? attackSwing : blockSwing
   }
 
   getSoftSwing (targetAngle: number): number {
     const angleDiff = getAngleDiff(targetAngle, this.angle)
-    const targetSpin = 2 * angleDiff
+    const targetSpin = 10 * angleDiff
     return Math.sign(targetSpin - this.spin)
   }
 

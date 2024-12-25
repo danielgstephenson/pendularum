@@ -10,8 +10,8 @@ export class Fighter extends Actor {
   static reach = 3
   movePower = 3
   maxSpeed = 3
-  swingPower = 0.2 * Math.PI
-  maxSpin = 1 * Math.PI
+  swingPower = 2 * Math.PI
+  maxSpin = 2 * Math.PI
   position = Vec2(0, 0)
   bladePosition = Vec2(0, 0)
   velocity = Vec2(0, 0)
