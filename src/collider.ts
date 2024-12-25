@@ -5,9 +5,8 @@ import { Fighter } from './actors/fighter'
 import { Star } from './actors/star'
 import { Player } from './actors/player'
 import { Torso } from './features/torso'
-import { Blade } from './features/blade'
-import { Boundary } from './features/boundary'
 import { GuardArea } from './features/guardArea'
+import { Blade } from './features/blade'
 
 export class Collider {
   game: Game
@@ -72,14 +71,13 @@ export class Collider {
         contact.setEnabled(false)
         return
       }
-      if (featureA instanceof Blade && featureB instanceof Boundary) {
+      if (featureA instanceof Blade || featureB instanceof Blade) {
         contact.setEnabled(false)
-        return
       }
       if (featureA instanceof Blade && featureB instanceof Torso) {
-        contact.setEnabled(false)
         const fighterA = featureA.fighter
         const fighterB = featureB.fighter
+        if (fighterA.dead || fighterB.dead) return
         if (fighterA.team !== fighterB.team) {
           fighterB.die()
         }

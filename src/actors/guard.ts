@@ -3,15 +3,9 @@ import { Fighter } from './fighter'
 import { Game } from '../game'
 import { GuardArea } from '../features/guardArea'
 import { Player } from './player'
-import { clamp, dirFromTo, getAngleDiff, normalize, project, rotate, vecToAngle, whichMin } from '../math'
-import { Blade } from '../features/blade'
-import { Torso } from '../features/torso'
-
+import { dirFromTo, project, randomDir, rotate, whichMin } from '../math'
 export class Guard extends Fighter {
-  spawnPoint: Vec2
   guardArea: GuardArea
-  pullBack = 0.0 * Math.PI
-  swingDistance = Blade.reach + Torso.radius + 1
 
   constructor (game: Game, position: Vec2) {
     super(game, position)
@@ -30,7 +24,6 @@ export class Guard extends Fighter {
   respawn (): void {
     super.respawn()
     this.body.setPosition(this.spawnPoint)
-    this.pullBack = Math.sign(Math.random() - 0.5) * this.pullBack
   }
 
   preStep (): void {
@@ -45,51 +38,48 @@ export class Guard extends Fighter {
     if (this.dead && this.guardArea.players.size === 0 && playerDistance > 10) {
       this.respawn()
     }
-    this.planSwing()
-    this.planMove()
+    this.move = this.getMove()
   }
 
-  planMove (): void {
+  getMove (): Vec2 {
     const player = this.getTargetPlayer()
-    if (player == null) {
-      const distToHome = Vec2.distance(this.position, this.spawnPoint)
-      const dirToHome = dirFromTo(this.position, this.spawnPoint)
-      this.move = distToHome > 1 ? dirToHome : Vec2(0, 0)
-      return
+    if (player == null) return this.getHomeMove()
+    const distToPlayer = Vec2.distance(this.position, player.position)
+    if (distToPlayer > 50) return this.getHomeMove()
+    const dirToPlayer = dirFromTo(this.position, player.position)
+    if (distToPlayer > 10) return dirToPlayer
+    if (this.spinIsSlow()) return this.getSpinMove()
+    return distToPlayer > 4 ? dirToPlayer : this.getSpinMove()
+  }
+
+  spinIsSlow (): boolean {
+    const distance = Vec2.distance(this.weapon.position, this.position)
+    const direction = dirFromTo(this.position, this.weapon.position)
+    const side = rotate(direction, 0.5 * Math.PI)
+    const spinVec = project(this.weapon.velocity, side)
+    if (distance < 0.8 * this.weapon.stringLength) return true
+    if (spinVec.length() < 0.6 * this.weapon.maxSpeed) return true
+    return false
+  }
+
+  getSpinMove (): Vec2 {
+    const distance = Vec2.distance(this.weapon.position, this.position)
+    if (distance === 0) return randomDir()
+    const weaponDir = dirFromTo(this.position, this.weapon.position)
+    const sideDir = rotate(weaponDir, 0.5 * Math.PI)
+    const spinVec = project(this.weapon.velocity, sideDir)
+    if (spinVec.length() === 0) {
+      return Vec2.mul(Math.random() - 2, sideDir)
     }
-    const distToPlayer = Vec2.distance(this.position, player.position)
-    const dirToPlayer = dirFromTo(this.position, player.position)
-    const dirFromPlayerBlade = dirFromTo(player.bladePosition, this.position)
-    const sideDir = rotate(dirToPlayer, 0.5 * Math.PI)
-    const circleDir = normalize(project(dirFromPlayerBlade, sideDir))
-    const circleWeight = clamp(0, 1, (2 + Blade.reach - distToPlayer) / 5)
-    const moveDir = Vec2.combine(circleWeight, circleDir, 1 - circleWeight, dirToPlayer)
-    this.move = moveDir
+    return Vec2.combine(-1, spinVec, -0.3, weaponDir)
   }
 
-  planSwing (): void {
-    const player = this.getNearestPlayer()
-    if (player == null) return
-    const distToPlayer = Vec2.distance(this.position, player.position)
-    const dirToPlayer = dirFromTo(this.position, player.position)
-    const angleToPlayer = vecToAngle(dirToPlayer)
-    const playerBladePosition = Vec2.combine(0.1, player.position, 0.9, player.bladePosition)
-    const blockAngle = vecToAngle(dirFromTo(this.position, playerBladePosition))
-    // const blockAngle = angleToPlayer + 0.2 * Math.PI * Math.sign(player.spin)
-    const attackSwing = this.getHardSwing(angleToPlayer)
-    const blockSwing = this.getSoftSwing(blockAngle)
-    this.swing = distToPlayer < this.swingDistance ? attackSwing : blockSwing
-  }
-
-  getSoftSwing (targetAngle: number): number {
-    const angleDiff = getAngleDiff(targetAngle, this.angle)
-    const targetSpin = 10 * angleDiff
-    return Math.sign(targetSpin - this.spin)
-  }
-
-  getHardSwing (targetAngle: number): number {
-    const angleDiff = getAngleDiff(targetAngle, this.angle)
-    return Math.sign(angleDiff)
+  getHomeMove (): Vec2 {
+    const distToHome = Vec2.distance(this.position, this.spawnPoint)
+    const dirToHome = dirFromTo(this.position, this.spawnPoint)
+    if (distToHome > 4) return dirToHome
+    if (this.spinIsSlow()) return this.getSpinMove()
+    return Vec2(0, 0)
   }
 
   getTargetPlayer (): Player | null {

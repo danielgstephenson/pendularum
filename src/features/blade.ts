@@ -1,29 +1,23 @@
-import { Polygon, Vec2 } from 'planck'
+import { Circle, Vec2 } from 'planck'
 import { Feature } from './feature'
 import { Fighter } from '../actors/fighter'
+import { Weapon } from '../actors/weapon'
 
 export class Blade extends Feature {
-  static start = 1.2
-  static width = 0.3
-  static narrow = 8
-  static reach = 9
-  static vertices = [
-    Vec2(Blade.start, -Blade.width),
-    Vec2(Blade.narrow, -Blade.width),
-    Vec2(Blade.reach, 0),
-    Vec2(Blade.narrow, Blade.width),
-    Vec2(Blade.start, Blade.width)
-  ]
-
+  static radius = 0.4
+  weapon: Weapon
   fighter: Fighter
+  alive = true
 
-  constructor (fighter: Fighter) {
-    super(fighter, {
-      shape: new Polygon(Blade.vertices),
+  constructor (weapon: Weapon) {
+    super(weapon, {
+      shape: new Circle(Vec2(0, 0), Blade.radius),
+      density: 1,
       friction: 0,
       restitution: 0
     })
-    this.fighter = fighter
+    this.weapon = weapon
+    this.fighter = this.weapon.fighter
     this.label = 'blade'
   }
 }
