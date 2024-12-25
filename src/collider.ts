@@ -31,7 +31,7 @@ export class Collider {
       if (actorA instanceof Player && featureA instanceof Torso && actorB instanceof Star) {
         actorA.spawnPoint = actorB.position
       }
-      if (actorA instanceof Player && featureA instanceof Torso && featureB instanceof GuardArea) {
+      if (actorA instanceof Player && featureB instanceof GuardArea) {
         featureB.players.set(actorA.id, actorA)
       }
     })
@@ -45,7 +45,7 @@ export class Collider {
       const featureA = pair[0]
       const featureB = pair[1]
       const actorA = featureA.actor
-      if (actorA instanceof Player && featureA instanceof Torso && featureB instanceof GuardArea) {
+      if (actorA instanceof Player && featureB instanceof GuardArea) {
         featureB.players.delete(actorA.id)
       }
     })
@@ -80,7 +80,6 @@ export class Collider {
         contact.setEnabled(false)
         const fighterA = featureA.fighter
         const fighterB = featureB.fighter
-        console.log('death', fighterA.team, fighterB.team, fighterA.dead, fighterB.dead)
         if (fighterA.team !== fighterB.team) {
           fighterB.die()
         }

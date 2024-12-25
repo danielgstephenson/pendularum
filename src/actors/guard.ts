@@ -9,6 +9,8 @@ import { Blade } from '../features/blade'
 export class Guard extends Fighter {
   spawnPoint: Vec2
   guardArea: GuardArea
+  pullBack = 0
+  swingDistance = 0
 
   constructor (game: Game, position: Vec2) {
     super(game, position)
@@ -21,11 +23,14 @@ export class Guard extends Fighter {
     })
     if (guardAreas.length === 0) throw new Error(`No guardArea at (${this.spawnPoint.x},${this.spawnPoint.y})`)
     this.guardArea = guardAreas[0]
+    this.respawn()
   }
 
   respawn (): void {
     super.respawn()
     this.body.setPosition(this.spawnPoint)
+    this.pullBack = (2 * Math.random() - 1) * Math.PI
+    this.swingDistance = Blade.reach * (1.2 + Math.random())
   }
 
   preStep (): void {
@@ -34,7 +39,10 @@ export class Guard extends Fighter {
 
   postStep (): void {
     super.postStep()
-    if (this.dead && this.guardArea.players.size === 0) {
+    const player = this.getNearestPlayer()
+    if (player == null) return
+    const playerDistance = Vec2.distance(this.position, player.position)
+    if (this.dead && this.guardArea.players.size === 0 && playerDistance > 30) {
       this.respawn()
     }
     this.planSwing()
@@ -62,13 +70,20 @@ export class Guard extends Fighter {
     const distToPlayer = Vec2.distance(this.position, player.position)
     const dirToPlayer = dirFromTo(this.position, player.position)
     const angleToPlayer = vecToAngle(dirToPlayer)
-    const angleDiff = getAngleDiff(angleToPlayer, this.angle)
-    if (distToPlayer < 20 * Blade.reach) {
-      this.swing = Math.sign(angleDiff)
-      return
-    }
+    const hardSwing = this.getHardSwing(angleToPlayer)
+    const softSwing = this.getSoftSwing(angleToPlayer + this.pullBack)
+    this.swing = distToPlayer < this.swingDistance ? hardSwing : softSwing
+  }
+
+  getSoftSwing (targetAngle: number): number {
+    const angleDiff = getAngleDiff(targetAngle, this.angle)
     const targetSpin = 2 * angleDiff
-    this.swing = Math.sign(targetSpin - this.spin)
+    return Math.sign(targetSpin - this.spin)
+  }
+
+  getHardSwing (targetAngle: number): number {
+    const angleDiff = getAngleDiff(targetAngle, this.angle)
+    return Math.sign(angleDiff)
   }
 
   getTargetPlayer (): Player | null {

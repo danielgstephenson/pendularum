@@ -8,7 +8,7 @@ import { Blade } from '../features/blade'
 
 export class Fighter extends Actor {
   static reach = 3
-  movePower = 10
+  movePower = 2
   maxSpeed = 2
   swingPower = 0.6 * Math.PI
   maxSpin = 1 * Math.PI
@@ -45,7 +45,6 @@ export class Fighter extends Actor {
 
   die (): void {
     this.dead = true
-    console.log('die', this.team)
   }
 
   updateConfiguration (): void {
@@ -75,7 +74,6 @@ export class Fighter extends Actor {
   }
 
   respawn (): void {
-    console.log('respawn', this.team)
     this.body.setLinearVelocity(Vec2(0, 0))
     this.body.setAngle(Math.random() * 2 * Math.PI)
     this.body.setAngularVelocity(0)
