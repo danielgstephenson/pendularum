@@ -3,7 +3,7 @@ import { Feature } from './feature'
 import { Fighter } from '../actors/fighter'
 
 export class Torso extends Feature {
-  static radius = 0.4
+  static radius = 0.7
   fighter: Fighter
   alive = true
 

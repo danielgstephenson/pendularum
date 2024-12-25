@@ -165,7 +165,7 @@ export class Renderer {
   }
 
   getStarVertices (): Vec2[] {
-    const radius = 0.5
+    const radius = 1
     const vertices: Vec2[] = []
     range(0, 4).forEach(i => {
       const angle = (0.25 + i / 5) * 2 * Math.PI

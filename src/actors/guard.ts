@@ -41,7 +41,7 @@ export class Guard extends Fighter {
     super.postStep()
     const player = this.getNearestPlayer()
     if (player == null) return
-    const playerDistance = Vec2.distance(this.position, player.position)
+    const playerDistance = Vec2.distance(this.spawnPoint, player.position)
     if (this.dead && this.guardArea.players.size === 0 && playerDistance > 10) {
       this.respawn()
     }
@@ -57,13 +57,12 @@ export class Guard extends Fighter {
       this.move = distToHome > 1 ? dirToHome : Vec2(0, 0)
       return
     }
-
     const distToPlayer = Vec2.distance(this.position, player.position)
     const dirToPlayer = dirFromTo(this.position, player.position)
     const dirFromPlayerBlade = dirFromTo(player.bladePosition, this.position)
     const sideDir = rotate(dirToPlayer, 0.5 * Math.PI)
     const circleDir = normalize(project(dirFromPlayerBlade, sideDir))
-    const circleWeight = clamp(0, 1, (3 + Blade.reach - distToPlayer) / 5)
+    const circleWeight = clamp(0, 1, (2 + Blade.reach - distToPlayer) / 5)
     const moveDir = Vec2.combine(circleWeight, circleDir, 1 - circleWeight, dirToPlayer)
     this.move = moveDir
   }
@@ -74,16 +73,17 @@ export class Guard extends Fighter {
     const distToPlayer = Vec2.distance(this.position, player.position)
     const dirToPlayer = dirFromTo(this.position, player.position)
     const angleToPlayer = vecToAngle(dirToPlayer)
-    const playerBladePosition = Vec2.combine(0.1, player.position, 0.9, player.bladePosition)
-    const angleToPlayerBlade = vecToAngle(dirFromTo(this.position, playerBladePosition))
-    const hardSwing = this.getHardSwing(angleToPlayer)
-    const softSwing = this.getSoftSwing(angleToPlayerBlade)
-    this.swing = distToPlayer < this.swingDistance ? hardSwing : softSwing
+    // const playerBladePosition = Vec2.combine(0.1, player.position, 0.9, player.bladePosition)
+    // const angleToPlayerBlade = vecToAngle(dirFromTo(this.position, playerBladePosition))
+    const blockAngle = angleToPlayer + 0.2 * Math.PI * Math.sign(player.spin)
+    const attackSwing = this.getHardSwing(angleToPlayer)
+    const holdSwing = this.getSoftSwing(blockAngle)
+    this.swing = distToPlayer < this.swingDistance ? attackSwing : holdSwing
   }
 
   getSoftSwing (targetAngle: number): number {
     const angleDiff = getAngleDiff(targetAngle, this.angle)
-    const targetSpin = 4 * angleDiff
+    const targetSpin = 2 * angleDiff
     return Math.sign(targetSpin - this.spin)
   }
 

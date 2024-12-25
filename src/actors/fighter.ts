@@ -8,9 +8,9 @@ import { Blade } from '../features/blade'
 
 export class Fighter extends Actor {
   static reach = 3
-  movePower = 2
-  maxSpeed = 2
-  swingPower = 0.6 * Math.PI
+  movePower = 3
+  maxSpeed = 3
+  swingPower = 0.2 * Math.PI
   maxSpin = 1 * Math.PI
   position = Vec2(0, 0)
   bladePosition = Vec2(0, 0)
