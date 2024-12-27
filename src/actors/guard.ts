@@ -3,7 +3,7 @@ import { Fighter } from './fighter'
 import { Game } from '../game'
 import { GuardArea } from '../features/guardArea'
 import { Player } from './player'
-import { dirFromTo, project, randomDir, rotate, whichMin } from '../math'
+import { dirFromTo, normalize, project, randomDir, rotate, whichMin } from '../math'
 export class Guard extends Fighter {
   guardArea: GuardArea
 
@@ -45,11 +45,19 @@ export class Guard extends Fighter {
     const player = this.getTargetPlayer()
     if (player == null) return this.getHomeMove()
     const distToPlayer = Vec2.distance(this.position, player.position)
-    if (distToPlayer > 50) return this.getHomeMove()
+    if (distToPlayer > 50) {
+      return this.spinIsSlow() ? this.getSpinMove() : this.getHomeMove()
+    }
+    if (distToPlayer > 10) {
+      return this.spinIsSlow() ? this.getSpinMove() : this.getChaseMove(player)
+    }
+    return distToPlayer > 4 ? this.getChaseMove(player) : this.getSpinMove()
+  }
+
+  getChaseMove (player: Player): Vec2 {
     const dirToPlayer = dirFromTo(this.position, player.position)
-    if (distToPlayer > 10) return dirToPlayer
-    if (this.spinIsSlow()) return this.getSpinMove()
-    return distToPlayer > 4 ? dirToPlayer : this.getSpinMove()
+    const targetVelocity = Vec2.combine(1, player.velocity, this.maxSpeed, dirToPlayer)
+    return dirFromTo(this.velocity, targetVelocity)
   }
 
   spinIsSlow (): boolean {
@@ -58,7 +66,7 @@ export class Guard extends Fighter {
     const side = rotate(direction, 0.5 * Math.PI)
     const spinVec = project(this.weapon.velocity, side)
     if (distance < 0.8 * this.weapon.stringLength) return true
-    if (spinVec.length() < 0.6 * this.weapon.maxSpeed) return true
+    if (spinVec.length() < 0.8 * this.weapon.maxSpeed) return true
     return false
   }
 
@@ -67,11 +75,11 @@ export class Guard extends Fighter {
     if (distance === 0) return randomDir()
     const weaponDir = dirFromTo(this.position, this.weapon.position)
     const sideDir = rotate(weaponDir, 0.5 * Math.PI)
-    const spinVec = project(this.weapon.velocity, sideDir)
+    const spinVec = normalize(project(this.weapon.velocity, sideDir))
     if (spinVec.length() === 0) {
-      return Vec2.mul(Math.random() - 2, sideDir)
+      return randomDir()
     }
-    return Vec2.combine(-1, spinVec, -0.3, weaponDir)
+    return Vec2.combine(-1, spinVec, -0.1, weaponDir)
   }
 
   getHomeMove (): Vec2 {

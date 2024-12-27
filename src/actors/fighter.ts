@@ -4,7 +4,7 @@ import { Actor } from './actor'
 import { Torso } from '../features/torso'
 import { FighterSummary } from '../summaries/fighterSummary'
 import { Weapon } from './weapon'
-import { rotate } from '../math'
+import { clampVec, rotate } from '../math'
 
 export class Fighter extends Actor {
   static reach = 3
@@ -45,8 +45,10 @@ export class Fighter extends Actor {
 
   preStep (): void {
     super.preStep()
-    const moveVector = this.move.length() > 0 ? this.move : Vec2.mul(this.velocity, -1)
-    const force = Vec2.mul((moveVector), this.movePower)
+    this.move = clampVec(this.move, 1)
+    const stopVector = clampVec(Vec2.mul(this.velocity, -1), 1)
+    const moveVector = this.move.length() > 0 ? this.move : stopVector
+    const force = Vec2.mul(moveVector, this.movePower)
     this.body.applyForce(force, this.body.getPosition())
   }
 
