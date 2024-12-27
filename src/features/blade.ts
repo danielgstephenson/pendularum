@@ -4,7 +4,7 @@ import { Fighter } from '../actors/fighter'
 import { Weapon } from '../actors/weapon'
 
 export class Blade extends Feature {
-  static radius = 0.4
+  static radius = 0.3
   weapon: Weapon
   fighter: Fighter
   alive = true
