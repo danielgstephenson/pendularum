@@ -84,3 +84,5 @@ export function project (a: Vec2, b: Vec2): Vec2 {
 export function reject (a: Vec2, b: Vec2): Vec2 {
   return Vec2.sub(a, project(a, b))
 }
+
+export const twoPi = 2 * Math.PI

@@ -5,16 +5,17 @@ import { Torso } from '../features/torso'
 import { FighterSummary } from '../summaries/fighterSummary'
 import { Weapon } from './weapon'
 import { clampVec, rotate } from '../math'
+import { Blade } from '../features/blade'
 
 export class Fighter extends Actor {
-  static reach = 3
-  movePower = 4
+  movePower = 8
   maxSpeed = 4
   move = Vec2(0, 0)
   spawnPoint = Vec2(0, 0)
   spawnOffset = 0
   dead = false
   team = 1
+  reach: number
   torso: Torso
   weapon: Weapon
 
@@ -37,6 +38,7 @@ export class Fighter extends Actor {
       center: Vec2(0, 0),
       I: 1
     })
+    this.reach = this.weapon.stringLength + Blade.radius + Torso.radius
   }
 
   die (): void {
