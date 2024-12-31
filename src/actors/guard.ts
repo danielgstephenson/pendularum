@@ -65,7 +65,8 @@ export class Guard extends Fighter {
     const swingTimes = this.getSwingTimes(this, player)
     const playerSwingTimes = this.getSwingTimes(player, this)
     const playerSwingFirst = playerSwingTimes[0] < swingTimes[0] + 0.1
-    const targetReachTime = playerSwingFirst ? swingTimes[1] - 0.2 : 0
+    const counterTime = 0.5 * (playerSwingTimes[0] + playerSwingTimes[1])
+    const targetReachTime = playerSwingFirst ? counterTime : -1
     const avoid = reachTime <= targetReachTime
     console.log(
       reachTime.toFixed(2),
@@ -77,7 +78,7 @@ export class Guard extends Fighter {
     const chaseDir = this.getChaseMove(player, this.maxSpeed)
     const avoidDir = dirFromTo(player.position, this.position)
     const distance = Vec2.distance(this.position, player.position)
-    if (avoid && distance < 20) return avoidDir
+    if (avoid && distance < 4 * this.reach) return avoidDir
     if (this.spinIsSlow()) return this.getSwingMove()
     return chaseDir
   }
@@ -106,7 +107,7 @@ export class Guard extends Fighter {
     if (spin === 0) return [Infinity, Infinity]
     const absAngleDiff = Math.abs(angleDiff)
     const absSpin = Math.abs(spin)
-    if (absAngleDiff < 0.1 * Math.PI) return [0, twoPi / absSpin]
+    if (absAngleDiff < 0.02 * Math.PI) return [0, twoPi / absSpin]
     if (spin * angleDiff > 0) return [absAngleDiff / absSpin, absAngleDiff + twoPi / absSpin]
     const bigAbsAngleDiff = 2 * Math.PI - absAngleDiff
     return [bigAbsAngleDiff / absSpin, bigAbsAngleDiff + twoPi / absSpin]
@@ -117,8 +118,8 @@ export class Guard extends Fighter {
     const direction = dirFromTo(this.position, this.weapon.position)
     const side = rotate(direction, 0.5 * Math.PI)
     const spinVec = project(this.weapon.velocity, side)
-    if (distance < 0.8 * this.weapon.stringLength) return true
-    if (spinVec.length() < 0.8 * this.weapon.maxSpeed) return true
+    if (distance < 0.5 * this.weapon.stringLength) return true
+    if (spinVec.length() < 0.5 * this.weapon.maxSpeed) return true
     return false
   }
 
