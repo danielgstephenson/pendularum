@@ -64,34 +64,6 @@ export class Guard extends Fighter {
     return dirFromTo(player.position, this.position)
   }
 
-  // getReachTimeVelocity (fighter: Fighter, other: Fighter, targetReachTime: number): Vec2 {
-  //   const distance = Vec2.distance(fighter.position, other.position)
-  //   const reachDistance = distance - fighter.reach
-  //   if (reachDistance <= 0) return dirFromTo(other.position, fighter.position)
-  //   const idealSpeed = reachDistance / targetReachTime - this.getApproachSpeed(other, fighter)
-  //   const possible = Math.abs(idealSpeed) < fighter.maxSpeed
-  //   const targetSpeed = possible ? idealSpeed : Math.sign(idealSpeed) * fighter.maxSpeed
-  //   const direction = dirFromTo(fighter.position, other.position)
-  //   return Vec2.mul(targetSpeed, direction)
-  // }
-
-  // getApproachSpeed (fighter: Fighter, other: Fighter): number {
-  //   const direction = dirFromTo(fighter.position, other.position)
-  //   return Vec2.dot(direction, fighter.velocity)
-  // }
-
-  // getReachTime (fighter: Fighter, other: Fighter): number {
-  //   const distance = Vec2.distance(fighter.position, other.position)
-  //   if (distance <= fighter.reach) return 0
-  //   const x = other.position.x - fighter.position.x
-  //   const y = other.position.y - fighter.position.y
-  //   const dx = other.velocity.x - fighter.velocity.x
-  //   const dy = other.velocity.y - fighter.velocity.y
-  //   const dDistance = (x * dx + y * dy) / distance
-  //   if (dDistance >= 0) return Infinity
-  //   return (fighter.reach - distance) / dDistance
-  // }
-
   getChaseMove (player: Player): Vec2 {
     const dirFromPlayer = dirFromTo(player.position, this.position)
     const targetPosition = Vec2.combine(1, player.position, 0.9 * this.reach, dirFromPlayer)
