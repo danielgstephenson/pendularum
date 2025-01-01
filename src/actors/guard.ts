@@ -6,6 +6,8 @@ import { Player } from './player'
 import { dirFromTo, getAngleDiff, normalize, project, randomDir, rotate, twoPi, vecToAngle, whichMax, whichMin } from '../math'
 export class Guard extends Fighter {
   guardArea: GuardArea
+  safeDistance: number
+  closeDistance: number
 
   constructor (game: Game, position: Vec2) {
     super(game, position)
@@ -18,6 +20,8 @@ export class Guard extends Fighter {
     })
     if (guardAreas.length === 0) throw new Error(`No guardArea at (${this.spawnPoint.x},${this.spawnPoint.y})`)
     this.guardArea = guardAreas[0]
+    this.safeDistance = 1.2 * this.reach
+    this.closeDistance = 0.5 * this.reach
     this.respawn()
   }
 
@@ -68,7 +72,7 @@ export class Guard extends Fighter {
     if (distToPlayer > 50) {
       return this.spinIsSlow() ? this.getSwingMove() : this.getHomeMove()
     }
-    if (distToPlayer > 1.3 * this.reach) {
+    if (distToPlayer > this.safeDistance) {
       return this.spinIsSlow() ? this.getSwingMove() : this.getChaseMove(player, this.reach)
     }
     return this.getFightMove(player)
@@ -76,14 +80,14 @@ export class Guard extends Fighter {
 
   getFightMove (player: Player): Vec2 {
     const distance = Vec2.distance(this.position, player.position)
-    if (distance < 0.9 * this.reach) return dirFromTo(player.position, this.position)
+    if (distance < this.closeDistance) return this.getChaseMove(player, this.safeDistance + 0.1)
     const reachTime = this.getReachTime(this, player)
     const swingTimes = this.getSwingTimes(this, player)
     const playerSwingTimes = this.getSwingTimes(player, this)
-    const intercept = reachTime + 0.1 < swingTimes[0] && swingTimes[0] + 0.1 < playerSwingTimes[0]
+    const intercept = reachTime < swingTimes[0] && swingTimes[0] < playerSwingTimes[0]
     const counter = playerSwingTimes[0] < reachTime && swingTimes[1] < playerSwingTimes[1]
-    if (intercept || counter) return this.getChaseMove(player, 0.9 * this.reach)
-    return this.getChaseMove(player, 1.4 * this.reach)
+    if (intercept || counter) return this.getChaseMove(player, this.closeDistance)
+    return this.getChaseMove(player, this.safeDistance + 0.1)
   }
 
   getChaseMove (player: Player, targetDistance: number): Vec2 {
