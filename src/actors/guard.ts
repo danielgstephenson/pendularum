@@ -68,7 +68,7 @@ export class Guard extends Fighter {
     if (distToPlayer > 50) {
       return this.spinIsSlow() ? this.getSwingMove() : this.getHomeMove()
     }
-    if (distToPlayer > 1.2 * this.reach) {
+    if (distToPlayer > 1.3 * this.reach) {
       return this.spinIsSlow() ? this.getSwingMove() : this.getChaseMove(player, this.reach)
     }
     return this.getFightMove(player)
@@ -83,7 +83,7 @@ export class Guard extends Fighter {
     const intercept = reachTime + 0.1 < swingTimes[0] && swingTimes[0] + 0.1 < playerSwingTimes[0]
     const counter = playerSwingTimes[0] < reachTime && swingTimes[1] < playerSwingTimes[1]
     if (intercept || counter) return this.getChaseMove(player, 0.9 * this.reach)
-    return this.getChaseMove(player, 1.3 * this.reach)
+    return this.getChaseMove(player, 1.4 * this.reach)
   }
 
   getChaseMove (player: Player, targetDistance: number): Vec2 {

@@ -7,7 +7,7 @@ import { Torso } from '../features/torso'
 
 export class Weapon extends Actor {
   stringLength = 4
-  maxSpeed = 10
+  maxSpeed = 8
   fighter: Fighter
   blade: Blade
 

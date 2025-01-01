@@ -9,7 +9,7 @@ import { Blade } from '../features/blade'
 import { Halo } from '../features/halo'
 
 export class Fighter extends Actor {
-  movePower = 10
+  movePower = 5
   maxSpeed = 2
   move = Vec2(0, 0)
   spawnPoint = Vec2(0, 0)
