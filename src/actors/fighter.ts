@@ -6,9 +6,10 @@ import { FighterSummary } from '../summaries/fighterSummary'
 import { Weapon } from './weapon'
 import { normalize, rotate } from '../math'
 import { Blade } from '../features/blade'
+import { Halo } from '../features/halo'
 
 export class Fighter extends Actor {
-  movePower = 20
+  movePower = 10
   maxSpeed = 2
   move = Vec2(0, 0)
   spawnPoint = Vec2(0, 0)
@@ -17,6 +18,7 @@ export class Fighter extends Actor {
   team = 1
   reach: number
   torso: Torso
+  halo: Halo
   weapon: Weapon
 
   constructor (game: Game, position: Vec2) {
@@ -34,6 +36,7 @@ export class Fighter extends Actor {
     this.torso = new Torso(this)
     this.weapon = new Weapon(this)
     this.reach = this.weapon.stringLength + Blade.radius + Torso.radius
+    this.halo = new Halo(this)
     this.body.setMassData({
       mass: 1,
       center: Vec2(0, 0),
@@ -52,6 +55,7 @@ export class Fighter extends Actor {
     const moveVector = this.move.length() > 0 ? this.move : stopVector
     const force = Vec2.mul(moveVector, this.movePower)
     this.body.applyForce(force, this.body.getPosition())
+    this.halo.wallPoints = []
   }
 
   postStep (): void {

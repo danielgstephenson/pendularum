@@ -1,4 +1,4 @@
-import { Contact } from 'planck'
+import { Contact, Vec2 } from 'planck'
 import { Game } from './game'
 import { Feature } from './features/feature'
 import { Fighter } from './actors/fighter'
@@ -7,6 +7,8 @@ import { Player } from './actors/player'
 import { Torso } from './features/torso'
 import { GuardArea } from './features/guardArea'
 import { Blade } from './features/blade'
+import { Halo } from './features/halo'
+import { Boundary } from './features/boundary'
 
 export class Collider {
   game: Game
@@ -73,6 +75,15 @@ export class Collider {
       }
       if (featureA instanceof Blade || featureB instanceof Blade) {
         contact.setEnabled(false)
+      }
+      if (featureA instanceof Halo || featureB instanceof Halo) {
+        contact.setEnabled(false)
+      }
+      if (featureA instanceof Halo && featureB instanceof Boundary) {
+        const worldManifold = contact.getWorldManifold(null)
+        if (worldManifold == null) return
+        const wallPoint = Vec2(worldManifold.points[0])
+        featureA.wallPoints.push(wallPoint)
       }
       if (featureA instanceof Blade && featureB instanceof Torso) {
         const fighterA = featureA.fighter
