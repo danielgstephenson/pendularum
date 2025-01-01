@@ -3,7 +3,7 @@ import { clamp } from '../math'
 
 export class Camera {
   position = Vec2(0, 0)
-  zoom = -10
+  zoom = -15
   scale = 1
   maxZoom = 15
   minZoom = -30

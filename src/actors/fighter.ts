@@ -4,12 +4,12 @@ import { Actor } from './actor'
 import { Torso } from '../features/torso'
 import { FighterSummary } from '../summaries/fighterSummary'
 import { Weapon } from './weapon'
-import { clampVec, rotate } from '../math'
+import { normalize, rotate } from '../math'
 import { Blade } from '../features/blade'
 
 export class Fighter extends Actor {
-  movePower = 8
-  maxSpeed = 4
+  movePower = 12
+  maxSpeed = 3
   move = Vec2(0, 0)
   spawnPoint = Vec2(0, 0)
   spawnOffset = 0
@@ -33,12 +33,12 @@ export class Fighter extends Actor {
     this.game.fighters.set(this.id, this)
     this.torso = new Torso(this)
     this.weapon = new Weapon(this)
+    this.reach = this.weapon.stringLength + Blade.radius + Torso.radius
     this.body.setMassData({
       mass: 1,
       center: Vec2(0, 0),
       I: 1
     })
-    this.reach = this.weapon.stringLength + Blade.radius + Torso.radius
   }
 
   die (): void {
@@ -47,8 +47,8 @@ export class Fighter extends Actor {
 
   preStep (): void {
     super.preStep()
-    this.move = clampVec(this.move, 1)
-    const stopVector = clampVec(Vec2.mul(this.velocity, -1), 1)
+    this.move = normalize(this.move)
+    const stopVector = normalize(Vec2.mul(this.velocity, -1))
     const moveVector = this.move.length() > 0 ? this.move : stopVector
     const force = Vec2.mul(moveVector, this.movePower)
     this.body.applyForce(force, this.body.getPosition())
