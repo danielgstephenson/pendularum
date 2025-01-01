@@ -49,26 +49,30 @@ export class Guard extends Fighter {
     if (distToPlayer > 50) {
       return this.spinIsSlow() ? this.getSwingMove() : this.getHomeMove()
     }
-    if (distToPlayer > 1.5 * this.reach) {
-      return this.spinIsSlow() ? this.getSwingMove() : this.getChaseMove(player)
+    if (distToPlayer > 1.1 * this.reach) {
+      return this.spinIsSlow() ? this.getSwingMove() : this.getChaseMove(player, this.reach)
     }
     return this.getFightMove(player)
   }
 
   getFightMove (player: Player): Vec2 {
+    const distance = Vec2.distance(this.position, player.position)
+    if (distance < 0.9 * this.reach) return dirFromTo(player.position, this.position)
     if (this.spinIsSlow()) return dirFromTo(player.position, this.position)
+    const reachTime = this.getReachTime(this, player)
     const swingTimes = this.getSwingTimes(this, player)
     const playerSwingTimes = this.getSwingTimes(player, this)
-    const advantage = swingTimes[0] < playerSwingTimes[0]
-    if (advantage) return this.getChaseMove(player)
-    return dirFromTo(player.position, this.position)
+    const intercept = reachTime + 0.1 < swingTimes[0] && swingTimes[0] + 0.1 < playerSwingTimes[0]
+    const counter = playerSwingTimes[0] + 0.1 < reachTime && swingTimes[1] + 0.1 < playerSwingTimes[1]
+    if (intercept || counter) return this.getChaseMove(player, 0.9 * this.reach)
+    return this.getChaseMove(player, 1.2 * this.reach)
   }
 
-  getChaseMove (player: Player): Vec2 {
+  getChaseMove (player: Player, targetDistance: number): Vec2 {
     const dirFromPlayer = dirFromTo(player.position, this.position)
-    const targetPosition = Vec2.combine(1, player.position, 0.9 * this.reach, dirFromPlayer)
+    const targetPosition = Vec2.combine(1, player.position, targetDistance, dirFromPlayer)
     const dirToTarget = dirFromTo(this.position, targetPosition)
-    const targetVelocity = Vec2.combine(1, player.velocity, this.maxSpeed, dirToTarget)
+    const targetVelocity = Vec2.combine(0.5, player.velocity, this.maxSpeed, dirToTarget)
     return dirFromTo(this.velocity, targetVelocity)
   }
 
@@ -88,6 +92,18 @@ export class Guard extends Fighter {
     if (spin * angleDiff > 0) return [absAngleDiff / absSpin, absAngleDiff + twoPi / absSpin]
     const bigAbsAngleDiff = 2 * Math.PI - absAngleDiff
     return [bigAbsAngleDiff / absSpin, bigAbsAngleDiff + twoPi / absSpin]
+  }
+
+  getReachTime (fighter: Fighter, other: Fighter): number {
+    const distance = Vec2.distance(fighter.position, other.position)
+    if (distance <= fighter.reach) return 0
+    const x = other.position.x - fighter.position.x
+    const y = other.position.y - fighter.position.y
+    const dx = other.velocity.x - fighter.velocity.x
+    const dy = other.velocity.y - fighter.velocity.y
+    const dDistance = (x * dx + y * dy) / distance
+    if (dDistance >= 0) return 2
+    return (fighter.reach - distance) / dDistance
   }
 
   spinIsSlow (): boolean {

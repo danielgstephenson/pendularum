@@ -8,8 +8,8 @@ import { normalize, rotate } from '../math'
 import { Blade } from '../features/blade'
 
 export class Fighter extends Actor {
-  movePower = 12
-  maxSpeed = 3
+  movePower = 20
+  maxSpeed = 2
   move = Vec2(0, 0)
   spawnPoint = Vec2(0, 0)
   spawnOffset = 0
