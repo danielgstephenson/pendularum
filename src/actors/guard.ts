@@ -79,6 +79,7 @@ export class Guard extends Fighter {
   }
 
   getFightMove (player: Player): Vec2 {
+    if (this.spinIsSlow()) return this.getChaseMove(player, this.safeDistance + 0.1)
     const distance = Vec2.distance(this.position, player.position)
     if (distance < this.closeDistance) return this.getChaseMove(player, this.safeDistance + 0.1)
     const reachTime = this.getReachTime(this, player)
