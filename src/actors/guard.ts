@@ -85,7 +85,7 @@ export class Guard extends Fighter {
     const reachTime = this.getReachTime(this, player)
     const swingTimes = this.getSwingTimes(this, player)
     const playerSwingTimes = this.getSwingTimes(player, this)
-    const intercept = reachTime < swingTimes[0] && swingTimes[0] < playerSwingTimes[0]
+    const intercept = reachTime + 0.2 < swingTimes[0] && swingTimes[0] + 0.2 < playerSwingTimes[0]
     const counter = playerSwingTimes[0] < reachTime && swingTimes[1] < playerSwingTimes[1]
     if (intercept || counter) return this.getChaseMove(player, this.closeDistance)
     return this.getChaseMove(player, this.safeDistance + 0.1)
