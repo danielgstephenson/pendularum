@@ -43,10 +43,20 @@ export class Layout {
 
   getGuardPoints (): Vec2[] {
     const guardPointLayer = this.svg.children[5]
-    const guardPoints = guardPointLayer.children.map(child => {
-      const x = Number(child.attributes.cx)
-      const y = Number(child.attributes.cy)
+    const guardPoints = guardPointLayer.children.map(guardCircle => {
+      const x = Number(guardCircle.attributes.cx)
+      const y = Number(guardCircle.attributes.cy)
       return Vec2(x, -y)
+    })
+    guardPointLayer.children.forEach(guardCircle => {
+      if (guardCircle.children.length === 0) return
+      if (guardCircle.children[0].children.length === 0) return
+      console.log('Description:')
+      const rawString = guardCircle.children[0].children[0].value
+      const jsonString = rawString.replaceAll('&quot;', '"')
+      console.log(rawString)
+      console.log(jsonString)
+      console.log(JSON.parse(jsonString))
     })
     return guardPoints
   }

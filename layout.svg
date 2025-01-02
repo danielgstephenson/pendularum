@@ -25,7 +25,7 @@
      units="mm"
      inkscape:zoom="2.932688"
      inkscape:cx="145.08874"
-     inkscape:cy="223.34459"
+     inkscape:cy="359.73823"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
@@ -108,7 +108,15 @@
        cx="52.5"
        cy="127.5"
        inkscape:label="guard"
-       r="1" />
+       r="1">
+      <desc
+         id="desc18950">{
+	&quot;distraction&quot;: 0.2,
+	&quot;aggression&quot;: 0.5,
+	&quot;rotatation&quot;: 0.3,
+	&quot;adjustment&quot;: 3
+}</desc>
+    </circle>
     <circle
        style="fill:#008000;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round"
        id="path845-9-9-5-1-9"
