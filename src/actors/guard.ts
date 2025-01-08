@@ -3,7 +3,7 @@ import { Fighter } from './fighter'
 import { Game } from '../game'
 import { GuardArea } from '../features/guardArea'
 import { Player } from './player'
-import { dirFromTo, getAngleDiff, normalize, project, randomDir, rotate, twoPi, vecToAngle, whichMax, whichMin } from '../math'
+import { dirFromTo, getAngleDiff, project, randomDir, rotate, twoPi, vecToAngle, whichMax, whichMin } from '../math'
 
 export class Guard extends Fighter {
   guardArea: GuardArea
@@ -146,17 +146,14 @@ export class Guard extends Fighter {
     if (distance === 0) return randomDir()
     const weaponDir = dirFromTo(this.position, this.weapon.position)
     const sideDir = rotate(weaponDir, 0.5 * Math.PI)
-    const spinVec = normalize(project(this.weapon.velocity, sideDir))
-    if (spinVec.length() === 0) {
-      return randomDir()
-    }
-    return Vec2.combine(-1, spinVec, -0.1, weaponDir)
+    const spinVec = Vec2.mul(-1, project(this.weapon.velocity, sideDir))
+    return spinVec.length() === 0 ? randomDir() : spinVec
   }
 
   getHomeMove (): Vec2 {
     const distToHome = Vec2.distance(this.position, this.spawnPoint)
     const dirToHome = dirFromTo(this.position, this.spawnPoint)
-    if (distToHome > 4) return dirToHome
+    if (distToHome > 10) return dirToHome
     if (this.spinIsSlow()) return this.getSwingMove()
     return Vec2(0, 0)
   }
