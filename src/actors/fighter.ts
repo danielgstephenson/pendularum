@@ -9,9 +9,9 @@ import { Blade } from '../features/blade'
 import { Halo } from '../features/halo'
 
 export class Fighter extends Actor {
-  movePower = 10
+  movePower = 2 // 10
   maxSpeed = 2
-  move = Vec2(0, 0)
+  moveDir = Vec2(0, 0)
   spawnPoint = Vec2(0, 0)
   spawnOffset = 0
   dead = false
@@ -50,12 +50,25 @@ export class Fighter extends Actor {
 
   preStep (): void {
     super.preStep()
-    this.move = normalize(this.move)
-    const stopVector = normalize(Vec2.mul(this.velocity, -1))
-    const moveVector = this.move.length() > 0 ? this.move : stopVector
-    const force = Vec2.mul(moveVector, this.movePower)
-    this.body.applyForce(force, this.body.getPosition())
     this.halo.wallPoints = []
+    this.applyMove()
+  }
+
+  applyMove (): void {
+    this.moveDir = normalize(this.moveDir)
+    if (this.moveDir.length() === 0) {
+      if (this.velocity.length() < 0.1) {
+        this.velocity = Vec2.zero()
+        this.body.setLinearVelocity(this.velocity)
+        return
+      }
+      const reverse = normalize(Vec2.mul(this.velocity, -5))
+      const force = Vec2.mul(this.movePower, reverse)
+      this.body.applyForce(force, this.body.getPosition())
+      return
+    }
+    const force = Vec2.mul(this.movePower, this.moveDir)
+    this.body.applyForce(force, this.body.getPosition())
   }
 
   postStep (): void {

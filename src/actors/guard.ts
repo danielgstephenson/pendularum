@@ -42,7 +42,7 @@ export class Guard extends Fighter {
     if (this.dead && this.guardArea.players.size === 0 && playerDistance > 10) {
       this.respawn()
     }
-    this.move = this.getMove()
+    this.moveDir = this.getMove()
   }
 
   getMove (): Vec2 {

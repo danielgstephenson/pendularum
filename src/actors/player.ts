@@ -18,8 +18,8 @@ export class Player extends Fighter {
 
   handleInput (input: InputSummary): void {
     const move = input.move ?? Vec2(0, 0)
-    this.move.x = move.x ?? 0
-    this.move.y = move.y ?? 0
+    this.moveDir.x = move.x ?? 0
+    this.moveDir.y = move.y ?? 0
   }
 
   getPlayerSummary (): PlayerSummary {
