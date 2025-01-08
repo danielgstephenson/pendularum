@@ -6,7 +6,7 @@ import { Feature } from '../features/feature'
 import { Torso } from '../features/torso'
 
 export class Weapon extends Actor {
-  stringLength = 4
+  stringLength = 8
   maxSpeed = 8
   fighter: Fighter
   blade: Blade
@@ -34,7 +34,7 @@ export class Weapon extends Actor {
       localAnchorA: Vec2(0, 0),
       localAnchorB: Vec2(0, 0),
       frequencyHz: 0.01,
-      dampingRatio: 1,
+      dampingRatio: 0,
       collideConnected: false
     })
     this.game.world.createJoint(distanceJoint)
