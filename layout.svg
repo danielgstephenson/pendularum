@@ -111,10 +111,10 @@
        r="1">
       <desc
          id="desc18950">{
-	&quot;distraction&quot;: 0.2,
+	&quot;chaos&quot;: 0.2,
 	&quot;aggression&quot;: 0.5,
 	&quot;rotatation&quot;: 0.3,
-	&quot;adjustment&quot;: 3
+	&quot;interval&quot;: 3
 }</desc>
     </circle>
   </g>

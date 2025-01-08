@@ -1,4 +1,4 @@
-import { DistanceJoint, Fixture, RopeJoint, Vec2 } from 'planck'
+import { DistanceJoint, Fixture, Vec2 } from 'planck'
 import { Actor } from './actor'
 import { Fighter } from './fighter'
 import { Blade } from '../features/blade'
@@ -33,20 +33,21 @@ export class Weapon extends Actor {
       bodyB: this.body,
       localAnchorA: Vec2(0, 0),
       localAnchorB: Vec2(0, 0),
-      frequencyHz: 0.2,
-      dampingRatio: 0,
+      length: this.stringLength,
+      frequencyHz: 0,
+      dampingRatio: 1,
       collideConnected: false
     })
     this.game.world.createJoint(distanceJoint)
-    const ropeJoint = new RopeJoint({
-      bodyA: this.fighter.body,
-      bodyB: this.body,
-      localAnchorA: Vec2(0, 0),
-      localAnchorB: Vec2(0, 0),
-      maxLength: this.stringLength,
-      collideConnected: false
-    })
-    this.game.world.createJoint(ropeJoint)
+    // const ropeJoint = new RopeJoint({
+    //   bodyA: this.fighter.body,
+    //   bodyB: this.body,
+    //   localAnchorA: Vec2(0, 0),
+    //   localAnchorB: Vec2(0, 0),
+    //   maxLength: this.stringLength,
+    //   collideConnected: false
+    // })
+    // this.game.world.createJoint(ropeJoint)
   }
 
   preStep (): void {

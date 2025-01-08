@@ -4,7 +4,7 @@ import { Actor } from './actor'
 import { Torso } from '../features/torso'
 import { FighterSummary } from '../summaries/fighterSummary'
 import { Weapon } from './weapon'
-import { normalize, rotate } from '../math'
+import { angleToDir, normalize, rotate } from '../math'
 import { Blade } from '../features/blade'
 import { Halo } from '../features/halo'
 
@@ -84,7 +84,10 @@ export class Fighter extends Actor {
     const startPoint = Vec2.add(this.spawnPoint, offset)
     this.body.setPosition(startPoint)
     this.body.setLinearVelocity(Vec2(0, 0))
-    this.weapon.body.setPosition(startPoint)
+    const angle = Math.random() * 2 * Math.PI
+    const weaponOffset = Vec2.mul(this.weapon.stringLength, angleToDir(angle))
+    const weaponStartPoint = Vec2.add(startPoint, weaponOffset)
+    this.weapon.body.setPosition(weaponStartPoint)
     this.weapon.body.setLinearVelocity(Vec2(0, 0))
     this.dead = false
   }

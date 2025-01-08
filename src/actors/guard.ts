@@ -4,6 +4,7 @@ import { Game } from '../game'
 import { GuardArea } from '../features/guardArea'
 import { Player } from './player'
 import { dirFromTo, getAngleDiff, normalize, project, randomDir, rotate, twoPi, vecToAngle, whichMax, whichMin } from '../math'
+
 export class Guard extends Fighter {
   guardArea: GuardArea
   safeDistance: number
