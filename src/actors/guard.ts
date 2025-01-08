@@ -22,6 +22,7 @@ export class Guard extends Fighter {
     this.guardArea = guardAreas[0]
     this.safeDistance = 1.2 * this.reach
     this.closeDistance = 0.5 * this.reach
+    console.log('guard', this.game.guards.size)
     this.respawn()
   }
 
