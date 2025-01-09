@@ -5,6 +5,8 @@ import { Blade } from '../features/blade'
 import { Feature } from '../features/feature'
 import { Torso } from '../features/torso'
 
+// Convert Weapon into a Feature of Fighter?
+
 export class Weapon extends Actor {
   stringLength = 4
   maxSpeed = 8
