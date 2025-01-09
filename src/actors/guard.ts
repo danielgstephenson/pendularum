@@ -9,6 +9,7 @@ export class Guard extends Fighter {
   guardArea: GuardArea
   safeDistance: number
   closeDistance: number
+  randomDir = randomDir()
 
   constructor (game: Game, position: Vec2) {
     super(game, position)
@@ -30,6 +31,7 @@ export class Guard extends Fighter {
   respawn (): void {
     super.respawn()
     this.body.setPosition(this.spawnPoint)
+    this.randomDir = randomDir()
   }
 
   preStep (): void {
@@ -81,7 +83,6 @@ export class Guard extends Fighter {
   }
 
   getFightMove (player: Player): Vec2 {
-    if (this.spinIsSlow()) return this.getChaseMove(player, this.safeDistance + 0.1)
     const distance = Vec2.distance(this.position, player.position)
     if (distance < this.closeDistance) return this.getChaseMove(player, this.safeDistance + 0.1)
     const reachTime = this.getReachTime(this, player)
@@ -90,6 +91,7 @@ export class Guard extends Fighter {
     const intercept = reachTime + 0.2 < swingTimes[0] && swingTimes[0] + 0.2 < playerSwingTimes[0]
     const counter = playerSwingTimes[0] < reachTime && swingTimes[1] < playerSwingTimes[1]
     if (intercept || counter) return this.getChaseMove(player, this.closeDistance)
+    if (this.spinIsSlow()) return this.getChaseMove(player, this.safeDistance + 0.1)
     return this.getChaseMove(player, this.safeDistance + 0.1)
   }
 
@@ -97,7 +99,7 @@ export class Guard extends Fighter {
     const dirFromPlayer = dirFromTo(player.position, this.position)
     const targetPosition = Vec2.combine(1, player.position, targetDistance, dirFromPlayer)
     const dirToTarget = dirFromTo(this.position, targetPosition)
-    const targetVelocity = Vec2.combine(0.5, player.velocity, this.maxSpeed, dirToTarget)
+    const targetVelocity = Vec2.combine(1, player.velocity, this.maxSpeed, dirToTarget)
     return dirFromTo(this.velocity, targetVelocity)
   }
 
@@ -136,18 +138,18 @@ export class Guard extends Fighter {
     const direction = dirFromTo(this.position, this.weapon.position)
     const side = rotate(direction, 0.5 * Math.PI)
     const spinVec = project(this.weapon.velocity, side)
-    if (distance < 0.8 * this.weapon.stringLength) return true
-    if (spinVec.length() < 0.8 * this.weapon.maxSpeed) return true
+    if (distance < 0.9 * this.weapon.stringLength) return true
+    if (spinVec.length() < 0.5 * this.weapon.maxSpeed) return true
     return false
   }
 
   getSwingMove (): Vec2 {
     const distance = Vec2.distance(this.weapon.position, this.position)
     if (distance === 0) return randomDir()
-    const weaponDir = dirFromTo(this.position, this.weapon.position)
-    const sideDir = rotate(weaponDir, 0.5 * Math.PI)
+    const toWeaponDir = dirFromTo(this.position, this.weapon.position)
+    const sideDir = rotate(toWeaponDir, 0.5 * Math.PI)
     const spinVec = Vec2.mul(-1, project(this.weapon.velocity, sideDir))
-    return spinVec.length() === 0 ? randomDir() : spinVec
+    return spinVec.length() === 0 ? this.randomDir : spinVec
   }
 
   getHomeMove (): Vec2 {
