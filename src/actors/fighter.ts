@@ -4,11 +4,12 @@ import { Actor } from './actor'
 import { Torso } from '../features/torso'
 import { FighterSummary } from '../summaries/fighterSummary'
 import { Weapon } from './weapon'
-import { angleToDir, normalize, rotate } from '../math'
+import { angleToDir, dirFromTo, normalize, rotate, vecToAngle } from '../math'
 import { Blade } from '../features/blade'
 import { Halo } from '../features/halo'
 
 export class Fighter extends Actor {
+  reach = 4
   movePower = 2 // 10
   maxSpeed = 2
   moveDir = Vec2(0, 0)
@@ -16,10 +17,11 @@ export class Fighter extends Actor {
   spawnOffset = 0
   dead = false
   team = 1
-  reach: number
   torso: Torso
   halo: Halo
   weapon: Weapon
+  angle = 0
+  spin = 0
 
   constructor (game: Game, position: Vec2) {
     super(game, {
@@ -31,7 +33,6 @@ export class Fighter extends Actor {
     })
     this.label = 'fighter'
     this.body.setPosition(position)
-    this.updateConfiguration()
     this.game.fighters.set(this.id, this)
     this.torso = new Torso(this)
     this.weapon = new Weapon(this)
@@ -90,6 +91,15 @@ export class Fighter extends Actor {
     this.weapon.body.setPosition(weaponStartPoint)
     this.weapon.body.setLinearVelocity(Vec2(0, 0))
     this.dead = false
+  }
+
+  updateConfiguration (): void {
+    super.updateConfiguration()
+    const toWeaponDir = dirFromTo(this.position, this.weapon.position)
+    this.angle = vecToAngle(toWeaponDir)
+    const tangent = rotate(toWeaponDir, 0.5 * Math.PI)
+    const tangentSpeed = Vec2.dot(this.weapon.velocity, tangent)
+    this.spin = tangentSpeed / this.weapon.stringLength
   }
 
   summarize (): FighterSummary {

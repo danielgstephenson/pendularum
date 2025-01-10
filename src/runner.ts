@@ -4,12 +4,13 @@ export class Runner {
   game: Game
   timescale: number
   time: number
+  timeStep = 0.02
 
   constructor (game: Game) {
     this.game = game
     this.time = performance.now()
     this.timescale = this.game.server.config.timeScale
-    setInterval(() => this.step(), 20)
+    setInterval(() => this.step(), this.timeStep * 1000)
   }
 
   step (): void {

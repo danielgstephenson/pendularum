@@ -5,11 +5,9 @@ import { Blade } from '../features/blade'
 import { Feature } from '../features/feature'
 import { Torso } from '../features/torso'
 
-// Convert Weapon into a Feature of Fighter?
-
 export class Weapon extends Actor {
-  stringLength = 4
   maxSpeed = 8
+  stringLength: number
   fighter: Fighter
   blade: Blade
 
@@ -22,6 +20,7 @@ export class Weapon extends Actor {
       fixedRotation: true
     })
     this.fighter = fighter
+    this.stringLength = fighter.reach - Blade.radius
     this.label = 'blade'
     this.body.setPosition(fighter.position)
     this.blade = new Blade(this)
@@ -37,7 +36,7 @@ export class Weapon extends Actor {
       localAnchorB: Vec2(0, 0),
       length: this.stringLength,
       frequencyHz: 0,
-      dampingRatio: 1,
+      dampingRatio: 0,
       collideConnected: false
     })
     this.game.world.createJoint(distanceJoint)

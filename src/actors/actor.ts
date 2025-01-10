@@ -20,7 +20,6 @@ export class Actor {
     this.body = this.game.world.createBody(bodyDef)
     this.body.setUserData(this)
     this.game.actors.set(this.id, this)
-    this.updateConfiguration()
   }
 
   getFixtures (): Fixture[] {
