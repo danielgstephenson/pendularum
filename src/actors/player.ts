@@ -28,7 +28,6 @@ export class Player extends Fighter {
 
   postStep (): void {
     super.postStep()
-    console.log('spin, angle', this.spin.toFixed(2), this.angle.toFixed(2))
     if (this.dead) {
       this.respawn()
     }

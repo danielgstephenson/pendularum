@@ -105,18 +105,15 @@ export class Guard extends Fighter {
 
   getSwingTimes (fighter: Fighter, other: Fighter): number[] {
     const fighterOtherDir = dirFromTo(fighter.position, other.position)
-    const fighterToBladeDist = Vec2.distance(fighter.weapon.position, fighter.position)
     const fighterToBladeDir = dirFromTo(fighter.position, fighter.weapon.position)
-    const tangent = rotate(fighterToBladeDir, 0.5 * Math.PI)
-    const spin = Vec2.dot(fighter.weapon.velocity, tangent) / fighterToBladeDist
     const bladeAngle = vecToAngle(fighterToBladeDir)
     const targetAngle = vecToAngle(fighterOtherDir)
     const angleDiff = getAngleDiff(targetAngle, bladeAngle)
-    if (spin === 0) return [Infinity, Infinity]
+    if (this.spin === 0) return [Infinity, Infinity]
     const absAngleDiff = Math.abs(angleDiff)
-    const absSpin = Math.abs(spin)
+    const absSpin = Math.abs(this.spin)
     if (absAngleDiff < 0.02 * Math.PI) return [0, twoPi / absSpin]
-    if (spin * angleDiff > 0) return [absAngleDiff / absSpin, absAngleDiff + twoPi / absSpin]
+    if (this.spin * angleDiff > 0) return [absAngleDiff / absSpin, absAngleDiff + twoPi / absSpin]
     const bigAbsAngleDiff = 2 * Math.PI - absAngleDiff
     return [bigAbsAngleDiff / absSpin, bigAbsAngleDiff + twoPi / absSpin]
   }
@@ -134,13 +131,7 @@ export class Guard extends Fighter {
   }
 
   spinIsSlow (): boolean {
-    const distance = Vec2.distance(this.weapon.position, this.position)
-    const direction = dirFromTo(this.position, this.weapon.position)
-    const side = rotate(direction, 0.5 * Math.PI)
-    const spinVec = project(this.weapon.velocity, side)
-    if (distance < 0.9 * this.weapon.stringLength) return true
-    if (spinVec.length() < 0.5 * this.weapon.maxSpeed) return true
-    return false
+    return Math.abs(this.spin) < 1.5
   }
 
   getSwingMove (): Vec2 {

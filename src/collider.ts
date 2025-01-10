@@ -6,7 +6,7 @@ import { Star } from './actors/star'
 import { Player } from './actors/player'
 import { Torso } from './features/torso'
 import { GuardArea } from './features/guardArea'
-import { Blade } from './features/blade'
+import { Bob } from './features/bob'
 import { Halo } from './features/halo'
 import { Boundary } from './features/boundary'
 
@@ -73,7 +73,7 @@ export class Collider {
         contact.setEnabled(false)
         return
       }
-      if (featureA instanceof Blade || featureB instanceof Blade) {
+      if (featureA instanceof Bob || featureB instanceof Bob) {
         contact.setEnabled(false)
       }
       if (featureA instanceof Halo || featureB instanceof Halo) {
@@ -85,7 +85,7 @@ export class Collider {
         const wallPoint = Vec2(worldManifold.points[0])
         featureA.wallPoints.push(wallPoint)
       }
-      if (featureA instanceof Blade && featureB instanceof Torso) {
+      if (featureA instanceof Bob && featureB instanceof Torso) {
         const fighterA = featureA.fighter
         const fighterB = featureB.fighter
         if (fighterA.dead || fighterB.dead) return

@@ -6,7 +6,7 @@ import { LayoutSummary } from '../summaries/layoutSummary'
 import { Camera } from './camera'
 import { Checker } from './checker'
 import { Client } from './client'
-import { Blade } from '../features/blade'
+import { Bob } from '../features/bob'
 
 export class Renderer {
   canvas: HTMLCanvasElement
@@ -124,7 +124,7 @@ export class Renderer {
     this.context.arc(
       fighter.bladePosition.x,
       fighter.bladePosition.y,
-      Blade.radius, 0, 2 * Math.PI
+      Bob.radius, 0, 2 * Math.PI
     )
     this.context.fill()
   }

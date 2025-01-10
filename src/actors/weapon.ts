@@ -1,7 +1,7 @@
 import { DistanceJoint, Fixture, Vec2 } from 'planck'
 import { Actor } from './actor'
 import { Fighter } from './fighter'
-import { Blade } from '../features/blade'
+import { Bob } from '../features/bob'
 import { Feature } from '../features/feature'
 import { Torso } from '../features/torso'
 
@@ -9,7 +9,7 @@ export class Weapon extends Actor {
   maxSpeed = 8
   stringLength: number
   fighter: Fighter
-  blade: Blade
+  bob: Bob
 
   constructor (fighter: Fighter) {
     super(fighter.game, {
@@ -20,10 +20,10 @@ export class Weapon extends Actor {
       fixedRotation: true
     })
     this.fighter = fighter
-    this.stringLength = fighter.reach - Blade.radius
-    this.label = 'blade'
+    this.stringLength = fighter.reach - Bob.radius
+    this.label = 'weapon'
     this.body.setPosition(fighter.position)
-    this.blade = new Blade(this)
+    this.bob = new Bob(this)
     this.body.setMassData({
       mass: 0.0000000001,
       center: Vec2(0, 0),
