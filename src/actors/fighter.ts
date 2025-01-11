@@ -5,7 +5,6 @@ import { Torso } from '../features/torso'
 import { FighterSummary } from '../summaries/fighterSummary'
 import { Weapon } from './weapon'
 import { angleToDir, dirFromTo, normalize, rotate, vecToAngle } from '../math'
-import { Bob } from '../features/bob'
 import { Halo } from '../features/halo'
 
 export class Fighter extends Actor {
@@ -36,7 +35,6 @@ export class Fighter extends Actor {
     this.game.fighters.set(this.id, this)
     this.torso = new Torso(this)
     this.weapon = new Weapon(this)
-    this.reach = this.weapon.stringLength + Bob.radius + Torso.radius
     this.halo = new Halo(this)
     this.body.setMassData({
       mass: 1,

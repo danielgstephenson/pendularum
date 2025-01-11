@@ -3,7 +3,8 @@ import { Fighter } from './fighter'
 import { Game } from '../game'
 import { GuardArea } from '../features/guardArea'
 import { Player } from './player'
-import { dirFromTo, getAngleDiff, project, randomDir, rotate, twoPi, vecToAngle, whichMax, whichMin } from '../math'
+import { clampVec, dirFromTo, getAngleDiff, project, randomDir, range, rotate, twoPi, vecToAngle, whichMax, whichMin } from '../math'
+import { Torso } from '../features/torso'
 
 export class Guard extends Fighter {
   guardArea: GuardArea
@@ -103,35 +104,61 @@ export class Guard extends Fighter {
     return sideDir
   }
 
-  getSwingTimes (fighter: Fighter, other: Fighter): number[] {
-    const fighterOtherDir = dirFromTo(fighter.position, other.position)
-    const fighterToBladeDir = dirFromTo(fighter.position, fighter.weapon.position)
-    const bladeAngle = vecToAngle(fighterToBladeDir)
-    const targetAngle = vecToAngle(fighterOtherDir)
-    const angleDiff = getAngleDiff(targetAngle, bladeAngle)
-    if (this.spin === 0) return [Infinity, Infinity]
-    const absAngleDiff = Math.abs(angleDiff)
-    const absSpin = Math.abs(this.spin)
-    if (absAngleDiff < 0.02 * Math.PI) return [0, twoPi / absSpin]
-    if (this.spin * angleDiff > 0) return [absAngleDiff / absSpin, absAngleDiff + twoPi / absSpin]
-    const bigAbsAngleDiff = 2 * Math.PI - absAngleDiff
-    return [bigAbsAngleDiff / absSpin, bigAbsAngleDiff + twoPi / absSpin]
-  }
-
-  getReachTime (fighter: Fighter, other: Fighter): number {
-    const distance = Vec2.distance(fighter.position, other.position)
-    if (distance <= fighter.reach) return 0
-    const x = other.position.x - fighter.position.x
-    const y = other.position.y - fighter.position.y
-    const dx = other.velocity.x - fighter.velocity.x
-    const dy = other.velocity.y - fighter.velocity.y
-    const dDistance = (x * dx + y * dy) / distance
-    if (dDistance >= 0) return 2
-    return (fighter.reach - distance) / dDistance
+  getAdvantage (player: Fighter, guardAdvance: number, playerAdvance: number): number {
+    let advantage = 0
+    const maxTime = 5
+    const dt = 0.1
+    const stepCount = Math.ceil(maxTime / dt)
+    const reachRange = this.reach - Torso.radius
+    let time = 0
+    const playerPosition = player.position
+    const guardPosition = this.position
+    let playerVelocity = player.velocity
+    let guardVelocity = this.velocity
+    range(0, stepCount).some(() => {
+      const distance = Vec2.distance(guardPosition, playerPosition)
+      if (distance < reachRange) {
+        const playerAngle = player.angle + time * player.spin
+        const guardAngle = this.angle + time * this.spin
+        const playerTargetAngle = vecToAngle(dirFromTo(playerPosition, guardPosition))
+        const guardTargetAngle = vecToAngle(dirFromTo(guardPosition, playerPosition))
+        const playerSwingTime = this.getSwingTime(playerAngle, playerTargetAngle, player.spin)
+        const guardSwingTime = this.getSwingTime(guardAngle, guardTargetAngle, this.spin)
+        advantage = playerSwingTime - guardSwingTime
+        return true
+      }
+      const playerToGuard = dirFromTo(playerPosition, guardPosition)
+      const guardToPlayer = dirFromTo(guardPosition, playerPosition)
+      const playerTargetVelocity = Vec2.combine(1, guardVelocity, playerAdvance * this.maxSpeed, playerToGuard)
+      const guardTargetVelocity = Vec2.combine(1, playerVelocity, guardAdvance * this.maxSpeed, guardToPlayer)
+      const playerMove = dirFromTo(playerVelocity, playerTargetVelocity)
+      const guardMove = dirFromTo(guardVelocity, guardTargetVelocity)
+      playerVelocity.x += playerMove.x * dt
+      playerVelocity.y += playerMove.y * dt
+      guardVelocity.x += guardMove.x * dt
+      guardVelocity.y += guardMove.y * dt
+      playerVelocity = clampVec(playerVelocity, player.maxSpeed)
+      guardVelocity = clampVec(guardVelocity, this.maxSpeed)
+      playerPosition.x += playerVelocity.x * dt
+      playerPosition.y += playerVelocity.y * dt
+      guardPosition.x += guardVelocity.x * dt
+      guardPosition.y += guardVelocity.y * dt
+      time += dt
+      return false
+    })
+    return advantage
   }
 
   spinIsSlow (): boolean {
     return Math.abs(this.spin) < 1.5
+  }
+
+  getSwingTime (angle: number, targetAngle: number, spin: number): number {
+    const angleDifference = getAngleDiff(targetAngle, angle)
+    const smallAngleDistance = Math.abs(angleDifference)
+    const largeAngleDistance = twoPi - smallAngleDistance
+    const angleDistance = spin * angleDifference > 0 ? smallAngleDistance : largeAngleDistance
+    return angleDistance / Math.abs(spin)
   }
 
   getSwingMove (): Vec2 {
