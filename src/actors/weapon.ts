@@ -20,7 +20,7 @@ export class Weapon extends Actor {
       fixedRotation: true
     })
     this.fighter = fighter
-    this.stringLength = fighter.reach - Bob.radius
+    this.stringLength = fighter.reach - Bob.radius - Torso.radius
     this.label = 'weapon'
     this.body.setPosition(fighter.position)
     this.bob = new Bob(this)
