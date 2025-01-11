@@ -22,7 +22,7 @@ export class Guard extends Fighter {
     })
     if (guardAreas.length === 0) throw new Error(`No guardArea at (${this.spawnPoint.x},${this.spawnPoint.y})`)
     this.guardArea = guardAreas[0]
-    this.safeDistance = 2 * this.reach
+    this.safeDistance = 1.5 * this.reach
     this.closeDistance = 0.5 * this.reach
     console.log('guard', this.game.guards.size)
     this.respawn()
@@ -92,7 +92,7 @@ export class Guard extends Fighter {
     const playerIntercept =
       reachTimeAA < playerSwingTime1 + 0.2 &&
       playerSwingTime1 < guardSwingTime1 + 0.2
-    if (playerIntercept) {
+    if (playerIntercept || reachTimeAA === 0) {
       console.log('playerIntercept',
         guardSwingTime1.toFixed(2),
         playerSwingTime1.toFixed(2),
@@ -103,8 +103,8 @@ export class Guard extends Fighter {
       return fleeMove
     }
     const playerCounter =
-      guardSwingTime1 < reachTimeAB &&
-      guardSwingTime1 < playerSwingTime1
+      guardSwingTime1 < reachTimeAB + 0.2 &&
+      guardSwingTime1 < playerSwingTime1 + 0.2
     if (playerCounter) {
       console.log(
         'playerCounter',

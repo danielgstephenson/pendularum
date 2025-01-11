@@ -9,7 +9,7 @@ import { Halo } from '../features/halo'
 
 export class Fighter extends Actor {
   reach = 4
-  movePower = 2 // 10
+  movePower = 4 // 10
   maxSpeed = 2
   moveDir = Vec2(0, 0)
   spawnPoint = Vec2(0, 0)
