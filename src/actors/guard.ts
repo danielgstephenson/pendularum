@@ -22,7 +22,7 @@ export class Guard extends Fighter {
     })
     if (guardAreas.length === 0) throw new Error(`No guardArea at (${this.spawnPoint.x},${this.spawnPoint.y})`)
     this.guardArea = guardAreas[0]
-    this.safeDistance = 1.2 * this.reach
+    this.safeDistance = 2 * this.reach
     this.closeDistance = 0.5 * this.reach
     console.log('guard', this.game.guards.size)
     this.respawn()
@@ -50,57 +50,56 @@ export class Guard extends Fighter {
   }
 
   getMove (): Vec2 {
-    const freeMove = this.getFreeMove()
-    const avoidWalls = this.getAvoidWallsMove()
-    const open = Vec2.dot(freeMove, avoidWalls) >= 0
-    if (open) return freeMove
-    const options = [rotate(avoidWalls, 0.5 * Math.PI), rotate(avoidWalls, -0.5 * Math.PI)]
-    const dots = options.map(option => Vec2.dot(option, freeMove))
-    return options[whichMax(dots)]
-  }
-
-  getAvoidWallsMove (): Vec2 {
-    if (this.halo.wallPoints.length === 0) return Vec2(0, 0)
-    const distances = this.halo.wallPoints.map(wallPoint => {
-      return Vec2.distance(this.position, wallPoint)
-    })
-    const nearWallPoint = this.halo.wallPoints[whichMin(distances)]
-    return dirFromTo(nearWallPoint, this.position)
-  }
-
-  getFreeMove (): Vec2 {
     if (this.dead) return Vec2(0, 0)
     const player = this.getTargetPlayer()
     if (player == null) return this.getHomeMove()
     const distToPlayer = Vec2.distance(this.position, player.position)
-    if (distToPlayer > 50) {
-      return this.spinIsSlow() ? this.getSwingMove() : this.getHomeMove()
-    }
-    if (distToPlayer > this.safeDistance) {
-      return this.spinIsSlow() ? this.getSwingMove() : this.getChaseMove(player, this.reach)
-    }
+    if (distToPlayer > 50) return this.getHomeMove()
+    if (distToPlayer > this.safeDistance) return this.getChaseMove(player)
     return this.getFightMove(player)
   }
 
-  getFightMove (player: Player): Vec2 {
-    const distance = Vec2.distance(this.position, player.position)
-    if (distance < this.closeDistance) return this.getChaseMove(player, this.safeDistance + 0.1)
-    const reachTime = this.getReachTime(this, player)
-    const swingTimes = this.getSwingTimes(this, player)
-    const playerSwingTimes = this.getSwingTimes(player, this)
-    const intercept = reachTime + 0.2 < swingTimes[0] && swingTimes[0] + 0.2 < playerSwingTimes[0]
-    const counter = playerSwingTimes[0] < reachTime && swingTimes[1] < playerSwingTimes[1]
-    if (intercept || counter) return this.getChaseMove(player, this.closeDistance)
-    if (this.spinIsSlow()) return this.getChaseMove(player, this.safeDistance + 0.1)
-    return this.getChaseMove(player, this.safeDistance + 0.1)
+  getHomeMove (): Vec2 {
+    const distToHome = Vec2.distance(this.position, this.spawnPoint)
+    const dirToHome = dirFromTo(this.position, this.spawnPoint)
+    if (distToHome > 5) return this.avoidWalls(dirToHome)
+    if (this.spinIsSlow()) return this.getSwingMove()
+    return Vec2(0, 0)
   }
 
-  getChaseMove (player: Player, targetDistance: number): Vec2 {
+  getChaseMove (player: Player): Vec2 {
+    if (this.spinIsSlow()) return this.getSwingMove()
+    const toPlayer = dirFromTo(this.position, player.position)
+    const targetVelocity = Vec2.combine(1, player.velocity, 1.2 * this.maxSpeed, toPlayer)
+    const chaseMove = dirFromTo(this.velocity, targetVelocity)
+    return chaseMove
+  }
+
+  getFightMove (player: Player): Vec2 {
+    if (this.halo.wallPoints.length > 0) {
+      const fromPlayer = dirFromTo(player.position, this.position)
+      return this.avoidWalls(fromPlayer)
+    }
     const dirFromPlayer = dirFromTo(player.position, this.position)
-    const targetPosition = Vec2.combine(1, player.position, targetDistance, dirFromPlayer)
+    const targetPosition = Vec2.combine(1, player.position, this.safeDistance, dirFromPlayer)
     const dirToTarget = dirFromTo(this.position, targetPosition)
     const targetVelocity = Vec2.combine(1, player.velocity, this.maxSpeed, dirToTarget)
-    return dirFromTo(this.velocity, targetVelocity)
+    const fightMove = dirFromTo(this.velocity, targetVelocity)
+    return fightMove
+  }
+
+  avoidWalls (targetDir: Vec2): Vec2 {
+    if (this.halo.wallPoints.length === 0) return targetDir
+    const distances = this.halo.wallPoints.map(wallPoint => {
+      return Vec2.distance(this.position, wallPoint)
+    })
+    const nearWallPoint = this.halo.wallPoints[whichMin(distances)]
+    const fromWallDir = dirFromTo(nearWallPoint, this.position)
+    if (Vec2.dot(fromWallDir, targetDir) >= 0) return targetDir
+    const options = [rotate(fromWallDir, 0.5 * Math.PI), rotate(fromWallDir, -0.5 * Math.PI)]
+    const optionDots = options.map(option => Vec2.dot(option, targetDir))
+    const sideDir = options[whichMax(optionDots)]
+    return sideDir
   }
 
   getSwingTimes (fighter: Fighter, other: Fighter): number[] {
@@ -140,15 +139,8 @@ export class Guard extends Fighter {
     const toWeaponDir = dirFromTo(this.position, this.weapon.position)
     const sideDir = rotate(toWeaponDir, 0.5 * Math.PI)
     const spinVec = Vec2.mul(-1, project(this.weapon.velocity, sideDir))
-    return spinVec.length() === 0 ? this.randomDir : spinVec
-  }
-
-  getHomeMove (): Vec2 {
-    const distToHome = Vec2.distance(this.position, this.spawnPoint)
-    const dirToHome = dirFromTo(this.position, this.spawnPoint)
-    if (distToHome > 10) return dirToHome
-    if (this.spinIsSlow()) return this.getSwingMove()
-    return Vec2(0, 0)
+    const swingMove = spinVec.length() === 0 ? this.randomDir : spinVec
+    return this.avoidWalls(swingMove)
   }
 
   getTargetPlayer (): Player | null {
