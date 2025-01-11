@@ -24,7 +24,7 @@ export class Guard extends Fighter {
     if (guardAreas.length === 0) throw new Error(`No guardArea at (${this.spawnPoint.x},${this.spawnPoint.y})`)
     this.weapon.body.setLinearVelocity(randomDir())
     this.guardArea = guardAreas[0]
-    this.safeDistance = 2 * this.reach
+    this.safeDistance = 3 * this.reach
     this.closeDistance = 0.5 * this.reach
     console.log('guard', this.game.guards.size)
     this.respawn()
@@ -71,23 +71,30 @@ export class Guard extends Fighter {
 
   getChaseMove (player: Player): Vec2 {
     if (this.spinIsSlow()) return this.getSwingMove()
-    const toPlayer = dirFromTo(this.position, player.position)
-    const targetVelocity = Vec2.combine(1, player.velocity, 1.2 * this.maxSpeed, toPlayer)
-    const chaseMove = dirFromTo(this.velocity, targetVelocity)
-    return chaseMove
+    return this.getRushMove(this.position, player.position, this.velocity, player.velocity, 1.2)
   }
 
   getFightMove (player: Player): Vec2 {
+    const fromPlayer = dirFromTo(player.position, this.position)
     if (this.halo.wallPoints.length > 0) {
-      const fromPlayer = dirFromTo(player.position, this.position)
       return this.avoidWalls(fromPlayer)
     }
-    const dirFromPlayer = dirFromTo(player.position, this.position)
-    const targetPosition = Vec2.combine(1, player.position, this.safeDistance, dirFromPlayer)
-    const dirToTarget = dirFromTo(this.position, targetPosition)
-    const targetVelocity = Vec2.combine(1, player.velocity, this.maxSpeed, dirToTarget)
-    const fightMove = dirFromTo(this.velocity, targetVelocity)
-    return fightMove
+    const rushLevels = [2, 1, 0, -1, -2]
+    let minAdvantage = -1
+    const firstSafeRush = rushLevels.find(guardRush => {
+      const advantages = rushLevels.map(playerRush => {
+        return this.getAdvantage(player, guardRush, playerRush)
+      })
+      minAdvantage = Math.min(...advantages)
+      return minAdvantage >= 0.5
+    })
+    const rushLevel = firstSafeRush ?? Math.min(...rushLevels)
+    const playerTargetAngle = vecToAngle(dirFromTo(player.position, this.position))
+    const guardTargetAngle = vecToAngle(dirFromTo(this.position, player.position))
+    const playerSwingTime = this.getSwingTime(player.angle, playerTargetAngle, player.spin)
+    const guardSwingTime = this.getSwingTime(this.angle, guardTargetAngle, this.spin)
+    console.log(playerSwingTime.toFixed(2), guardSwingTime.toFixed(2), rushLevel, minAdvantage.toFixed(2))
+    return this.getRushMove(this.position, player.position, this.velocity, player.velocity, rushLevel)
   }
 
   avoidWalls (targetDir: Vec2): Vec2 {
@@ -104,17 +111,17 @@ export class Guard extends Fighter {
     return sideDir
   }
 
-  getAdvantage (player: Fighter, guardAdvance: number, playerAdvance: number): number {
-    let advantage = 0
+  getAdvantage (player: Fighter, guardRush: number, playerRush: number): number {
+    let advantage = 1
     const maxTime = 5
-    const dt = 0.1
+    const dt = 0.02
     const stepCount = Math.ceil(maxTime / dt)
     const reachRange = this.reach - Torso.radius
     let time = 0
-    const playerPosition = player.position
-    const guardPosition = this.position
-    let playerVelocity = player.velocity
-    let guardVelocity = this.velocity
+    const playerPosition = player.position.clone()
+    const guardPosition = this.position.clone()
+    let playerVelocity = player.velocity.clone()
+    let guardVelocity = this.velocity.clone()
     range(0, stepCount).some(() => {
       const distance = Vec2.distance(guardPosition, playerPosition)
       if (distance < reachRange) {
@@ -127,12 +134,8 @@ export class Guard extends Fighter {
         advantage = playerSwingTime - guardSwingTime
         return true
       }
-      const playerToGuard = dirFromTo(playerPosition, guardPosition)
-      const guardToPlayer = dirFromTo(guardPosition, playerPosition)
-      const playerTargetVelocity = Vec2.combine(1, guardVelocity, playerAdvance * this.maxSpeed, playerToGuard)
-      const guardTargetVelocity = Vec2.combine(1, playerVelocity, guardAdvance * this.maxSpeed, guardToPlayer)
-      const playerMove = dirFromTo(playerVelocity, playerTargetVelocity)
-      const guardMove = dirFromTo(guardVelocity, guardTargetVelocity)
+      const playerMove = this.getRushMove(playerPosition, guardPosition, playerVelocity, guardVelocity, playerRush)
+      const guardMove = this.getRushMove(guardPosition, playerPosition, guardVelocity, playerVelocity, guardRush)
       playerVelocity.x += playerMove.x * dt
       playerVelocity.y += playerMove.y * dt
       guardVelocity.x += guardMove.x * dt
@@ -158,7 +161,14 @@ export class Guard extends Fighter {
     const smallAngleDistance = Math.abs(angleDifference)
     const largeAngleDistance = twoPi - smallAngleDistance
     const angleDistance = spin * angleDifference > 0 ? smallAngleDistance : largeAngleDistance
-    return angleDistance / Math.abs(spin)
+    const hitAngleDistange = Math.max(0, angleDistance - Math.PI / 8)
+    return hitAngleDistange / Math.abs(spin)
+  }
+
+  getRushMove (myPosition: Vec2, otherPosition: Vec2, myVelocity: Vec2, otherVelocity: Vec2, rush: number): Vec2 {
+    const selfToOther = dirFromTo(myPosition, otherPosition)
+    const targetVelocity = Vec2.combine(1, otherVelocity, rush * this.maxSpeed, selfToOther)
+    return dirFromTo(myVelocity, targetVelocity)
   }
 
   getSwingMove (): Vec2 {
