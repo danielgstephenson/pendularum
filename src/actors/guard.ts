@@ -3,7 +3,7 @@ import { Fighter } from './fighter'
 import { Game } from '../game'
 import { GuardArea } from '../features/guardArea'
 import { Player } from './player'
-import { clampVec, dirFromTo, getAngleDiff, normalize, project, randomDir, range, rotate, twoPi, vecToAngle, whichMax, whichMin } from '../math'
+import { clampVec, dirFromTo, getAngleDiff, project, randomDir, range, rotate, twoPi, vecToAngle, whichMax, whichMin } from '../math'
 
 export class Guard extends Fighter {
   guardArea: GuardArea
@@ -21,12 +21,8 @@ export class Guard extends Fighter {
       return guardArea.polygon.testPoint(worldTransform, this.spawnPoint)
     })
     if (guardAreas.length === 0) throw new Error(`No guardArea at (${this.spawnPoint.x},${this.spawnPoint.y})`)
-    const toWeapon = dirFromTo(this.position, this.weapon.position)
-    const swingSign = Math.random() > 0.5 ? 1 : -1
-    const tangent = rotate(toWeapon, swingSign * 0.5 * Math.PI)
-    this.weapon.body.applyForceToCenter(tangent)
     this.guardArea = guardAreas[0]
-    this.safeDistance = 1.5 * this.reach
+    this.safeDistance = 2 * this.reach
     this.closeDistance = 0.5 * this.reach
     console.log('guard', this.game.guards.size)
     this.respawn()
@@ -36,6 +32,8 @@ export class Guard extends Fighter {
     super.respawn()
     this.body.setPosition(this.spawnPoint)
     this.randomDir = randomDir()
+    const force = Vec2.mul(10, randomDir())
+    this.weapon.body.applyForceToCenter(force)
   }
 
   preStep (): void {
@@ -67,39 +65,102 @@ export class Guard extends Fighter {
     const distToHome = Vec2.distance(this.position, this.spawnPoint)
     const dirToHome = dirFromTo(this.position, this.spawnPoint)
     if (distToHome > 5) {
-      console.log('home')
       return this.avoidWalls(dirToHome)
     }
-    if (this.spinIsSlow()) return this.getSwingMove()
-    return Vec2(0, 0)
+    return this.getSwingMove()
   }
 
   getChaseMove (player: Player): Vec2 {
     if (this.spinIsSlow()) return this.getSwingMove()
-    console.log('chase')
     return this.getRushMove(this.position, player.position, this.velocity, player.velocity, 1.2)
   }
 
   getFightMove (player: Player): Vec2 {
-    const reachTimeAA = this.getReachTime(player, +2, +2)
-    const reachTimeAB = this.getReachTime(player, +2, -2)
-    const reachTimeBA = this.getReachTime(player, -2, +2)
-    const reachTimeBB = this.getReachTime(player, -2, -2)
+    const reachTimeAB = this.getReachTime(player, +100, -100)
     const playerTargetAngle = vecToAngle(dirFromTo(player.position, this.position))
     const guardTargetAngle = vecToAngle(dirFromTo(this.position, player.position))
-    const playerFullTurnTime = player.spin === 0 ? Infinity : twoPi / Math.abs(player.spin)
-    const guardFullTurnTime = this.spin === 0 ? Infinity : twoPi / Math.abs(this.spin)
     const playerSwingTime1 = this.getSwingTime(player.angle, playerTargetAngle, player.spin)
     const guardSwingTime1 = this.getSwingTime(this.angle, guardTargetAngle, this.spin)
+    const playerFullTurnTime = player.spin === 0 ? 10 : twoPi / Math.abs(player.spin)
+    const guardFullTurnTime = this.spin === 0 ? 10 : twoPi / Math.abs(this.spin)
     const playerSwingTime2 = playerSwingTime1 + playerFullTurnTime
     const guardSwingTime2 = guardSwingTime1 + guardFullTurnTime
-    const intercept = reachTimeAB < guardSwingTime1 + 0.2 && guardSwingTime1 < playerSwingTime1 + 0.2
-    if (intercept) {
-      console.log('intercept')
-      return this.getRushMove(this.position, player.position, this.velocity, player.velocity, 2)
+    const intercept =
+      reachTimeAB + 0.2 < guardSwingTime1 &&
+      guardSwingTime1 + 0.2 < playerSwingTime1
+    const attackMove = this.getRushMove(this.position, player.position, this.velocity, player.velocity, 2)
+    const distanceRatio = Vec2.distance(this.position, player.position) / this.reach
+    if (distanceRatio < 0.7) {
+      console.log('swing',
+        guardSwingTime1.toFixed(2),
+        playerSwingTime1.toFixed(2),
+        guardSwingTime2.toFixed(2),
+        playerSwingTime2.toFixed(2),
+        distanceRatio.toFixed(2)
+      )
+      return this.getSwingMove()
     }
-    console.log('flee')
-    return this.getRushMove(this.position, player.position, this.velocity, player.velocity, -2)
+    if (intercept) {
+      console.log('intercept',
+        guardSwingTime1.toFixed(2),
+        playerSwingTime1.toFixed(2),
+        guardSwingTime2.toFixed(2),
+        playerSwingTime2.toFixed(2),
+        distanceRatio.toFixed(2)
+      )
+      return attackMove
+    }
+    const reachTimeAA = this.getReachTime(player, +100, +100)
+    const counter =
+      playerSwingTime1 < reachTimeAA &&
+      guardSwingTime2 < playerSwingTime2 &&
+      playerSwingTime1 < guardSwingTime1
+    if (counter) {
+      console.log('counter',
+        guardSwingTime1.toFixed(2),
+        playerSwingTime1.toFixed(2),
+        guardSwingTime2.toFixed(2),
+        playerSwingTime2.toFixed(2),
+        distanceRatio.toFixed(2)
+      )
+      return attackMove
+    }
+    const fleeMove = this.getRushMove(this.position, player.position, this.velocity, player.velocity, -100)
+    const playerIntercept =
+      reachTimeAA < playerSwingTime1 + 0.5 &&
+      playerSwingTime1 < guardSwingTime1 + 0.5
+    if (playerIntercept) {
+      console.log('playerIntercept',
+        guardSwingTime1.toFixed(2),
+        playerSwingTime1.toFixed(2),
+        guardSwingTime2.toFixed(2),
+        playerSwingTime2.toFixed(2),
+        distanceRatio.toFixed(2)
+      )
+      return fleeMove
+    }
+    const playerCounter =
+      guardSwingTime1 < reachTimeAA &&
+      playerSwingTime2 < guardSwingTime2
+    if (playerCounter) {
+      console.log(
+        'playerCounter',
+        guardSwingTime1.toFixed(2),
+        playerSwingTime1.toFixed(2),
+        guardSwingTime2.toFixed(2),
+        playerSwingTime2.toFixed(2),
+        distanceRatio.toFixed(2)
+      )
+      return fleeMove
+    }
+    console.log('attack',
+      guardSwingTime1.toFixed(2),
+      playerSwingTime1.toFixed(2),
+      guardSwingTime2.toFixed(2),
+      playerSwingTime2.toFixed(2),
+      distanceRatio.toFixed(2)
+    )
+    return attackMove
   }
 
   avoidWalls (targetDir: Vec2): Vec2 {
@@ -147,7 +208,7 @@ export class Guard extends Fighter {
   }
 
   spinIsSlow (): boolean {
-    return Math.abs(this.spin) < 1.5
+    return this.weapon.velocity.length() < 0.7 * this.weapon.maxSpeed
   }
 
   getSwingTime (angle: number, targetAngle: number, spin: number): number {
@@ -169,7 +230,6 @@ export class Guard extends Fighter {
   }
 
   getSwingMove (): Vec2 {
-    console.log('swing')
     const distance = Vec2.distance(this.weapon.position, this.position)
     if (distance === 0) return randomDir()
     const toWeaponDir = dirFromTo(this.position, this.weapon.position)
