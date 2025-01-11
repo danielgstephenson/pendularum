@@ -77,6 +77,7 @@ export class Guard extends Fighter {
 
   getFightMove (player: Player): Vec2 {
     const reachTimeAB = this.getReachTime(player, +100, -100)
+    const reachTimeAA = this.getReachTime(player, +100, +100)
     const playerTargetAngle = vecToAngle(dirFromTo(player.position, this.position))
     const guardTargetAngle = vecToAngle(dirFromTo(this.position, player.position))
     const playerSwingTime1 = this.getSwingTime(player.angle, playerTargetAngle, player.spin)
@@ -85,70 +86,33 @@ export class Guard extends Fighter {
     const guardFullTurnTime = this.spin === 0 ? 10 : twoPi / Math.abs(this.spin)
     const playerSwingTime2 = playerSwingTime1 + playerFullTurnTime
     const guardSwingTime2 = guardSwingTime1 + guardFullTurnTime
-    const intercept =
-      reachTimeAB + 0.2 < guardSwingTime1 &&
-      guardSwingTime1 + 0.2 < playerSwingTime1
-    const attackMove = this.getRushMove(this.position, player.position, this.velocity, player.velocity, 2)
-    const distanceRatio = Vec2.distance(this.position, player.position) / this.reach
-    if (distanceRatio < 0.7) {
-      console.log('swing',
-        guardSwingTime1.toFixed(2),
-        playerSwingTime1.toFixed(2),
-        guardSwingTime2.toFixed(2),
-        playerSwingTime2.toFixed(2),
-        distanceRatio.toFixed(2)
-      )
-      return this.getSwingMove()
-    }
-    if (intercept) {
-      console.log('intercept',
-        guardSwingTime1.toFixed(2),
-        playerSwingTime1.toFixed(2),
-        guardSwingTime2.toFixed(2),
-        playerSwingTime2.toFixed(2),
-        distanceRatio.toFixed(2)
-      )
-      return attackMove
-    }
-    const reachTimeAA = this.getReachTime(player, +100, +100)
-    const counter =
-      playerSwingTime1 < reachTimeAA &&
-      guardSwingTime2 < playerSwingTime2 &&
-      playerSwingTime1 < guardSwingTime1
-    if (counter) {
-      console.log('counter',
-        guardSwingTime1.toFixed(2),
-        playerSwingTime1.toFixed(2),
-        guardSwingTime2.toFixed(2),
-        playerSwingTime2.toFixed(2),
-        distanceRatio.toFixed(2)
-      )
-      return attackMove
-    }
+    const attackMove = this.getRushMove(this.position, player.position, this.velocity, player.velocity, 100)
     const fleeMove = this.getRushMove(this.position, player.position, this.velocity, player.velocity, -100)
+    const distanceRatio = Vec2.distance(this.position, player.position) / this.reach
     const playerIntercept =
-      reachTimeAA < playerSwingTime1 + 0.5 &&
-      playerSwingTime1 < guardSwingTime1 + 0.5
+      reachTimeAA < playerSwingTime1 + 0.2 &&
+      playerSwingTime1 < guardSwingTime1 + 0.2
     if (playerIntercept) {
       console.log('playerIntercept',
         guardSwingTime1.toFixed(2),
         playerSwingTime1.toFixed(2),
-        guardSwingTime2.toFixed(2),
-        playerSwingTime2.toFixed(2),
+        reachTimeAA.toFixed(2),
+        reachTimeAB.toFixed(2),
         distanceRatio.toFixed(2)
       )
       return fleeMove
     }
     const playerCounter =
-      guardSwingTime1 < reachTimeAA &&
-      playerSwingTime2 < guardSwingTime2
+      guardSwingTime1 < reachTimeAB &&
+      guardSwingTime1 < playerSwingTime1
     if (playerCounter) {
       console.log(
         'playerCounter',
         guardSwingTime1.toFixed(2),
         playerSwingTime1.toFixed(2),
-        guardSwingTime2.toFixed(2),
-        playerSwingTime2.toFixed(2),
+        distanceRatio.toFixed(2),
+        reachTimeAA.toFixed(2),
+        reachTimeAB.toFixed(2),
         distanceRatio.toFixed(2)
       )
       return fleeMove
@@ -156,8 +120,9 @@ export class Guard extends Fighter {
     console.log('attack',
       guardSwingTime1.toFixed(2),
       playerSwingTime1.toFixed(2),
-      guardSwingTime2.toFixed(2),
-      playerSwingTime2.toFixed(2),
+      distanceRatio.toFixed(2),
+      reachTimeAA.toFixed(2),
+      reachTimeAB.toFixed(2),
       distanceRatio.toFixed(2)
     )
     return attackMove
@@ -189,8 +154,10 @@ export class Guard extends Fighter {
     range(0, stepCount).some(() => {
       const distance = Vec2.distance(guardPosition, playerPosition)
       if (distance < this.reach) return true
-      const playerMove = this.getRushMove(playerPosition, guardPosition, playerVelocity, guardVelocity, playerRush)
-      const guardMove = this.getRushMove(guardPosition, playerPosition, guardVelocity, playerVelocity, guardRush)
+      // const playerMove = this.getRushMove(playerPosition, guardPosition, playerVelocity, guardVelocity, playerRush)
+      // const guardMove = this.getRushMove(guardPosition, playerPosition, guardVelocity, playerVelocity, guardRush)
+      const playerMove = Vec2.mul(Math.sign(playerRush), dirFromTo(playerPosition, guardPosition))
+      const guardMove = Vec2.mul(Math.sign(guardRush), dirFromTo(guardPosition, playerPosition))
       playerVelocity.x += playerMove.x * dt
       playerVelocity.y += playerMove.y * dt
       guardVelocity.x += guardMove.x * dt
@@ -214,7 +181,6 @@ export class Guard extends Fighter {
   getSwingTime (angle: number, targetAngle: number, spin: number): number {
     const angleDifference = getAngleDiff(targetAngle, angle)
     const smallAngleDistance = Math.abs(angleDifference)
-    if (smallAngleDistance < 0.2 * Math.PI) return 0
     const largeAngleDistance = twoPi - smallAngleDistance
     const angleDistance = spin * angleDifference > 0 ? smallAngleDistance : largeAngleDistance
     const hitAngleDistange = Math.max(0, angleDistance - 0.1 * Math.PI)
