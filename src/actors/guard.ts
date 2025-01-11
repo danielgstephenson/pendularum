@@ -80,22 +80,18 @@ export class Guard extends Fighter {
     const reachTimeAA = this.getReachTime(player, +100, +100)
     const playerTargetAngle = vecToAngle(dirFromTo(player.position, this.position))
     const guardTargetAngle = vecToAngle(dirFromTo(this.position, player.position))
-    const playerSwingTime1 = this.getSwingTime(player.angle, playerTargetAngle, player.spin)
-    const guardSwingTime1 = this.getSwingTime(this.angle, guardTargetAngle, this.spin)
-    const playerFullTurnTime = player.spin === 0 ? 10 : twoPi / Math.abs(player.spin)
-    const guardFullTurnTime = this.spin === 0 ? 10 : twoPi / Math.abs(this.spin)
-    const playerSwingTime2 = playerSwingTime1 + playerFullTurnTime
-    const guardSwingTime2 = guardSwingTime1 + guardFullTurnTime
+    const playerSwingTime = this.getSwingTime(player.angle, playerTargetAngle, player.spin)
+    const guardSwingTime = this.getSwingTime(this.angle, guardTargetAngle, this.spin)
     const attackMove = this.getRushMove(this.position, player.position, this.velocity, player.velocity, 100)
     const fleeMove = this.getRushMove(this.position, player.position, this.velocity, player.velocity, -100)
     const distanceRatio = Vec2.distance(this.position, player.position) / this.reach
     const playerIntercept =
-      reachTimeAA < playerSwingTime1 + 0.2 &&
-      playerSwingTime1 < guardSwingTime1 + 0.2
+      reachTimeAA < playerSwingTime + 0.2 &&
+      playerSwingTime < guardSwingTime + 0.2
     if (playerIntercept || reachTimeAA === 0) {
       console.log('playerIntercept',
-        guardSwingTime1.toFixed(2),
-        playerSwingTime1.toFixed(2),
+        guardSwingTime.toFixed(2),
+        playerSwingTime.toFixed(2),
         reachTimeAA.toFixed(2),
         reachTimeAB.toFixed(2),
         distanceRatio.toFixed(2)
@@ -103,13 +99,13 @@ export class Guard extends Fighter {
       return fleeMove
     }
     const playerCounter =
-      guardSwingTime1 < reachTimeAB + 0.2 &&
-      guardSwingTime1 < playerSwingTime1 + 0.2
+      guardSwingTime < reachTimeAB + 0.2 &&
+      guardSwingTime < playerSwingTime + 0.2
     if (playerCounter) {
       console.log(
         'playerCounter',
-        guardSwingTime1.toFixed(2),
-        playerSwingTime1.toFixed(2),
+        guardSwingTime.toFixed(2),
+        playerSwingTime.toFixed(2),
         distanceRatio.toFixed(2),
         reachTimeAA.toFixed(2),
         reachTimeAB.toFixed(2),
@@ -118,8 +114,8 @@ export class Guard extends Fighter {
       return fleeMove
     }
     console.log('attack',
-      guardSwingTime1.toFixed(2),
-      playerSwingTime1.toFixed(2),
+      guardSwingTime.toFixed(2),
+      playerSwingTime.toFixed(2),
       distanceRatio.toFixed(2),
       reachTimeAA.toFixed(2),
       reachTimeAB.toFixed(2),

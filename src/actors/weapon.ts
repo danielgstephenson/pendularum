@@ -6,7 +6,7 @@ import { Feature } from '../features/feature'
 import { Torso } from '../features/torso'
 
 export class Weapon extends Actor {
-  maxSpeed = 8
+  maxSpeed = 6
   stringLength: number
   fighter: Fighter
   bob: Bob
