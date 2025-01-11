@@ -32,7 +32,7 @@ export class Collider {
       if (actorA instanceof Player && featureA instanceof Torso && actorB instanceof Star) {
         actorA.spawnPoint = actorB.position
       }
-      if (actorA instanceof Player && featureB instanceof GuardArea) {
+      if (actorA instanceof Player && featureA instanceof Torso && featureB instanceof GuardArea) {
         featureB.players.set(actorA.id, actorA)
       }
     })
@@ -46,7 +46,7 @@ export class Collider {
       const featureA = pair[0]
       const featureB = pair[1]
       const actorA = featureA.actor
-      if (actorA instanceof Player && featureB instanceof GuardArea) {
+      if (actorA instanceof Player && featureA instanceof Torso && featureB instanceof GuardArea) {
         featureB.players.delete(actorA.id)
       }
     })

@@ -21,6 +21,7 @@ export class Guard extends Fighter {
       return guardArea.polygon.testPoint(worldTransform, this.spawnPoint)
     })
     if (guardAreas.length === 0) throw new Error(`No guardArea at (${this.spawnPoint.x},${this.spawnPoint.y})`)
+    this.weapon.body.setLinearVelocity(randomDir())
     this.guardArea = guardAreas[0]
     this.safeDistance = 2 * this.reach
     this.closeDistance = 0.5 * this.reach
